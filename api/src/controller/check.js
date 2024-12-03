@@ -25,7 +25,6 @@ const isValidTel = (tel) => {
     if(match==undefined){
         return false
     }
-    console.log(match.length, match[0].length)
     return match.length == 1 && match[0].length == tel.length
 }
 
