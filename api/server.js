@@ -1,12 +1,22 @@
 //import
 const express = require("express")
 const cors = require("cors")
-const app = express()
+var fs = require('fs')
+var morgan = require('morgan')
 const { eleveRouter, profRouter, vieScolaireRouter } = require("./src/router")
 const { host, port } = require("./src/constant/config.const")
+
+const app = express()
+
+if (!fs.existsSync('./log')) {
+    fs.mkdirSync('./log', { recursive: true });
+}
+const accessLogStream = fs.createWriteStream('./log/access.log', { flags: 'a' })
 //plugin
 app.use(cors())
 app.use(express.json())
+app.use(morgan(':status || :method :date[clf] || :response-time || :url || :user-agent', { stream: accessLogStream }))
+app.use(morgan(':status || :method :date[clf] || :response-time || :url || :user-agent'))
 //route
 app.get('/', (req, res) => { res.send("exNihilo api") })
 app.use('/eleve', eleveRouter)
