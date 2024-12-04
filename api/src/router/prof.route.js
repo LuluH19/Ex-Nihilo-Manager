@@ -39,6 +39,7 @@ profRouter.post("/register", async (req, res) => {
         role: "prof"
     }
     const currentMatiere = req.body.matiere || ""
+
     if (!isValidDataObject(currentProf)) {
         return res.status(400).send({message: "incorrect format prof"})
     }
@@ -64,7 +65,6 @@ profRouter.post("/register", async (req, res) => {
                 utilisateurModel.create(currentProf).then(
                     prof => {
                         matiereModel.create({nom:currentMatiere, prof:prof._id}).then((data)=>{
-                            console.log(data)
                             return res.status(200).send(generateToken(prof))
                         })
                     }
@@ -81,10 +81,9 @@ profRouter.post("/info", async (req, res)=>{
     const decodedToken = jwt.decode(token)
     const currentProf = {
         email: decodedToken.email || "",
-        id: decodedToken.id || "",
+        _id: decodedToken.id || "",
         role: decodedToken.role || ""
     }
-    console.log(currentProf)
     if (!isValidDataObject(currentProf)) {
         return res.status(400).send({message: "incorrect format prof"})
     }
@@ -94,14 +93,13 @@ profRouter.post("/info", async (req, res)=>{
     if(!verifyToken(token)){
         return res.status(400).send({message: "unknow token"})
     }
-    utilisateurModel.findOne({ email: currentProf.email, _id : currentProf.id, role:currentProf.role },{password:0, _id:0}).then(
+    utilisateurModel.findOne(currentProf,{password:0, _id:0}).then(
         prof => {
             if (!prof) {
                 return res.status(400).send({ message: "prof not found" })
             }else{
                 matiereModel.findOne({prof:currentProf.id}).then(
                     matiere=>{
-                        console.log(matiere)
                         if(!matiere){
                             return res.status(400).send({ message: "matiere not found" })
                         }else{
@@ -120,7 +118,7 @@ profRouter.post("/delete", async (req, res) => {
     const decodedToken = jwt.decode(token)
     const currentProf = {
         email: decodedToken.email || "",
-        id: decodedToken.id || "",
+        _id: decodedToken.id || "",
         role: decodedToken.role || ""
     }
     if (!isValidDataObject(currentProf)) {
@@ -132,13 +130,20 @@ profRouter.post("/delete", async (req, res) => {
     if(!verifyToken(token)){
         return res.status(400).send({message: "unknow token"})
     }
-    utilisateurModel.findOne({ email: currentProf.email, password: currentProf.id, role : currentProf.role }).then(
-        data => {
-            if (!data) {    
+    utilisateurModel.findOne(currentProf).then(
+        prof => {
+            if (!prof) {    
                 return res.status(400).send({ message: "prof not found" })
             }
-            utilisateurModel.findOneAndDelete({ email: currentProf.email, password: currentProf.id, role : currentProf.role }).then(
-                res.send({message : "prof delete"})
+            utilisateurModel.findOneAndDelete(currentProf).then(
+                ()=>{
+                    matiereModel.findOneAndDelete({prof:prof._id}).then(
+                        ()=>{
+                            return res.send({message : "prof delete"})
+                        }
+                    )
+                    
+                }
             )
         }
     )

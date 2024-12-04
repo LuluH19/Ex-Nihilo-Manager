@@ -1,7 +1,7 @@
 const eleveRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
-const { utilisateurModel } = require('../database/model.db')
+const { utilisateurModel, noteModel, matiereModel } = require('../database/model.db')
 const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidAge } = require('../controller/check')
 const { generateToken, verifyToken } = require("../middleware/jwt")
 
@@ -17,8 +17,11 @@ eleveRouter.post("/login", async (req, res) => {
         eleve => {
             if (!eleve) {    
                 return res.status(400).send({ message: "eleve not found" })
+            }else if(eleve.role!="eleve"){
+                return res.status(400).send({ message: "not a eleve" })
+            }else{
+                return res.send(generateToken(eleve))
             }
-            return res.send(generateToken(eleve))
         }
     )
     
@@ -70,35 +73,7 @@ eleveRouter.post("/info", async (req, res)=>{
     const decodedToken = jwt.decode(token)
     const currentEleve = {
         email: decodedToken.email || "",
-        id: decodedToken.id || ""
-    }
-    if (!isValidDataObject(currentEleve)) {
-        return res.status(400).send({message: "incorrect format eleve"})
-    }
-    if (!token.trim()) {
-        return res.status(400).send({message: "no token found"})
-    }
-    if(!verifyToken(token)){
-        return res.status(400).send({message: "unknow token"})
-    }
-    utilisateurModel.findOne({ email: currentEleve.email, _id : currentEleve.id },{password:0, _id:0}).then(
-        data => {
-            if (!data) {    
-                return res.status(400).send({ message: "eleve not found" })
-            }else{
-                return res.send(data)
-            }
-        }
-    )
-})
-
-//Delete
-eleveRouter.post("/delete", async (req, res) => {
-    const token = req.headers.authorization || ""
-    const decodedToken = jwt.decode(token)
-    const currentEleve = {
-        email: decodedToken.email || "",
-        id: decodedToken.id || "",
+        _id: decodedToken.id || "",
         role: decodedToken.role || ""
     }
     if (!isValidDataObject(currentEleve)) {
@@ -110,12 +85,73 @@ eleveRouter.post("/delete", async (req, res) => {
     if(!verifyToken(token)){
         return res.status(400).send({message: "unknow token"})
     }
-    utilisateurModel.findOne({ email: currentEleve.email, _id: currentEleve.id, role : currentEleve.role }).then(
+    utilisateurModel.findOne(currentEleve,{password:0, _id:0}).then(
+        eleve => {
+            if (!eleve) {    
+                return res.status(400).send({ message: "eleve not found" })
+            }else{
+                return res.send(eleve)
+            }
+        }
+    )
+})
+
+eleveRouter.post("/notes", async (req, res)=>{
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentEleve = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    if (!isValidDataObject(currentEleve)) {
+        return res.status(400).send({message: "incorrect format eleve"})
+    }
+    if (!token.trim()) {
+        return res.status(400).send({message: "no token found"})
+    }
+    if(!verifyToken(token)){
+        return res.status(400).send({message: "unknow token"})
+    }
+    utilisateurModel.findOne(currentEleve,{password:0, _id:0}).then(
+        eleve => {
+            if (!eleve) {    
+                return res.status(400).send({ message: "eleve not found" })
+            }else{
+                noteModel.findOne({eleve:currentEleve._id}).populate({path:'matiere',select:'nom'}).then(
+                    notes => {
+                        return res.send(notes)
+                    }
+                )
+            }
+        }
+    )
+})
+
+//Delete
+eleveRouter.post("/delete", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentEleve = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    if (!isValidDataObject(currentEleve)) {
+        return res.status(400).send({message: "incorrect format eleve"})
+    }
+    if (!token.trim()) {
+        return res.status(400).send({message: "no token found"})
+    }
+    if(!verifyToken(token)){
+        return res.status(400).send({message: "unknow token"})
+    }
+    utilisateurModel.findOne(currentEleve).then(
         data => {
             if (!data) {    
                 return res.status(400).send({ message: "eleve not found" })
             }else{
-                utilisateurModel.findOneAndDelete({ email: currentEleve.email, _id: currentEleve.id, role : currentEleve.role }).then(
+                utilisateurModel.findOneAndDelete(currentEleve).then(
                     () => {return res.send({message : "eleve delete"})}
                 )
             }
