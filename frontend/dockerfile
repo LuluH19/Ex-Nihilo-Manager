@@ -3,5 +3,5 @@ RUN mkdir /ex-nihilo-manager-api
 COPY . ./ex-nihilo-manager-api
 WORKDIR /ex-nihilo-manager-api
 RUN npm i
-EXPOSE 4000
+EXPOSE 3000
 CMD ["npm","run","start"]

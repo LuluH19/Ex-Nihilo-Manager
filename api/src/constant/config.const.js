@@ -1,7 +1,7 @@
 const dotenv = require("dotenv")
 const dotenvExpand = require('dotenv-expand')
 dotenvExpand.expand(dotenv.config())
-
+console.log(process.env)
 const db_url = process.env.DB_URL || ""
 const host = process.env.HOST || "localhost"
 const port = process.env.PORT || 3000
