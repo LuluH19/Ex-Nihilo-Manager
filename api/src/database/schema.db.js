@@ -18,7 +18,6 @@ const matiereSchema = new mongoose.Schema({
 
 const classeSchema = new mongoose.Schema({
     nom: { type: String, required: true, trim:true},
-    prof : { type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur', require : true },
     eleves : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur' }],
     nbPlace : { type: Number, required:true }
 }, { versionKey: false })
@@ -30,6 +29,7 @@ const noteSchema = new mongoose.Schema({
 }, { versionKey: false })
 
 const coursSchema = new mongoose.Schema({
+    prof : { type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur', require : true },
     classe : { type: mongoose.Schema.Types.ObjectId, ref: 'Classe', require : true },
     matiere : { type: mongoose.Schema.Types.ObjectId, ref: 'Matiere', required: true },
     agenda : { type: mongoose.Schema.Types.ObjectId, ref: 'Agenda', require : true },

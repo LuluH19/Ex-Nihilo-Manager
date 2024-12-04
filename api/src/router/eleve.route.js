@@ -162,7 +162,6 @@ eleveRouter.post("/update", async (req, res) => {
             return res.send(updatedEleve)
         }
     )     
-    
 })
 
 module.exports = { eleveRouter }

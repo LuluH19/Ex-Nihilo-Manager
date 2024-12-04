@@ -1,7 +1,7 @@
 const profRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
-const { utilisateurModel, matiereModel } = require('../database/model.db')
+const { utilisateurModel, matiereModel, noteModel, classeModel } = require('../database/model.db')
 const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidAge } = require('../controller/check')
 const { generateToken, verifyToken } = require('../middleware/jwt')
 
@@ -17,8 +17,11 @@ profRouter.post("/login", async (req, res) => {
         prof => {
             if (!prof) {    
                 return res.status(400).send({ message: "prof not found" })
+            }else if(prof.role!="prof"){
+                return res.status(400).send({ message: "not a prof" })
+            }else{
+                return res.send(generateToken(prof))
             }
-            return res.send(generateToken(prof))
         }
     )
     
@@ -178,5 +181,60 @@ profRouter.post("/update", async (req, res) => {
     )     
     
 })
+profRouter.post("/notes/add", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentProf = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    const currentEleve = {
+        email : req.body.emailEleve || "",
+        note : req.body.note || ""
+    }
+    if (!isValidDataObject(currentProf)) {
+        return res.status(400).send({message: "incorrect format prof"})
+    }
+    if (!isValidDataObject(currentEleve)) {
+        return res.status(400).send({message: "incorrect format eleve"})
+    }
+    if (!token.trim()) {
+        return res.status(400).send({message: "no token found"})
+    }
+    if(!verifyToken(token)){
+        return res.status(400).send({message: "unknow token"})
+    }
+    utilisateurModel.findOne(currentProf).then(
+        prof => {
+            if(!prof){
+                return res.send({message :"prof not found"})
+            }else{
+                utilisateurModel.findOne({email:currentEleve.email}).then(
+                    eleve => {
+                        if(!eleve){
+                            return res.send({message :"eleve not found"})
+                        }else if(eleve.role!="eleve"){
+                            return res.send({message :"eleves isnt a eleve"})
+                        }else{
+                            matiereModel.findOne({prof:prof._id}).then(
+                                matiere => {
+                                    if(!matiere){
+                                        return res.send({message :"matiere not found"})
+                                    }else{
+                                        noteModel.create({eleve:eleve._id, matiere:matiere._id, valeur:currentEleve.note}).then(()=>{
+                                            return res.send({message :"note added"})
+                                        })
+                                    }
+                                }
+                            )
+                        }
+                    }
+                )
+            }
+        }
+    )
+})
+
 
 module.exports = { profRouter }
