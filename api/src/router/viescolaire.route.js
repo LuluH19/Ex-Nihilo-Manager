@@ -11,20 +11,20 @@ vieScolaireRouter.post("/login", async (req, res) => {
         password: req.body.password ? crypto.createHash('sha256').update(req.body.password).digest("base64") : ""
     }
     if (!isValidDataObject(currentVieScolaire)) {
-        return res.status(400).send({message: "incorrect format vieScolaire"})
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
     }
     utilisateurModel.findOne({ email: currentVieScolaire.email, password: currentVieScolaire.password }).then(
         vieScolaire => {
-            if (!vieScolaire) {    
+            if (!vieScolaire) {
                 return res.status(400).send({ message: "vieScolaire not found" })
-            }else if(vieScolaire.role!="vieScolaire"){
+            } else if (vieScolaire.role != "vieScolaire") {
                 return res.status(400).send({ message: "not a vieScolaire" })
-            }else{
+            } else {
                 return res.send(generateToken(vieScolaire))
             }
         }
     )
-    
+
 })
 //Create
 vieScolaireRouter.post("/register", async (req, res) => {
@@ -36,10 +36,10 @@ vieScolaireRouter.post("/register", async (req, res) => {
         age: req.body.age || "",
         telephone: req.body.telephone || "",
         photo: req.body.photo || "",
-        role : "vieScolaire"
+        role: "vieScolaire"
     }
     if (!isValidDataObject(currentVieScolaire)) {
-        return res.status(400).send({message: "incorrect format vieScolaire"})
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
     }
     if (!isValidEmail(currentVieScolaire.email)) {
         return res.status(400).send({ message: "incorrect mail format" })
@@ -47,28 +47,28 @@ vieScolaireRouter.post("/register", async (req, res) => {
     if (!isValidPassword(req.body.password)) {
         return res.status(400).send({ message: "incorrect password format" })
     }
-    if (!isValidTel(currentVieScolaire.telephone)){
+    if (!isValidTel(currentVieScolaire.telephone)) {
         return res.status(400).send({ message: "incorrect telephone format" })
     }
-    if(!isValidAge(currentVieScolaire.age)){
+    if (!isValidAge(currentVieScolaire.age)) {
         return res.status(400).send({ message: "incorrect age format" })
     }
-    utilisateurModel.findOne({email: req.body.email}).then(
+    utilisateurModel.findOne({ email: req.body.email }).then(
         data => {
-            if(!data){
+            if (!data) {
                 utilisateurModel.create(currentVieScolaire).then(
-                    (vieScolaire)=>{
+                    (vieScolaire) => {
                         return res.send(generateToken(vieScolaire))
                     }
                 )
-            }else{
-                return res.status(404).send({message: "already exist"})
+            } else {
+                return res.status(404).send({ message: "already exist" })
             }
         }
     )
 })
 
-vieScolaireRouter.post("/info", async (req, res)=>{
+vieScolaireRouter.post("/info", async (req, res) => {
     const token = req.headers.authorization || ""
     const decodedToken = jwt.decode(token)
     const currentVieScolaire = {
@@ -77,19 +77,19 @@ vieScolaireRouter.post("/info", async (req, res)=>{
         role: decodedToken.role || ""
     }
     if (!isValidDataObject(currentVieScolaire)) {
-        return res.status(400).send({message: "incorrect format vieScolaire"})
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
     }
     if (!token.trim()) {
-        return res.status(400).send({message: "no token found"})
+        return res.status(400).send({ message: "no token found" })
     }
-    if(!verifyToken(token)){
-        return res.status(400).send({message: "unknow token"})
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
     }
-    utilisateurModel.findOne(currentVieScolaire,{password:0, _id:0}).then(
+    utilisateurModel.findOne(currentVieScolaire, { password: 0, _id: 0 }).then(
         data => {
-            if (!data) {    
+            if (!data) {
                 return res.status(400).send({ message: "vieScolaire not found" })
-            }else{
+            } else {
                 return res.send(data)
             }
         }
@@ -106,21 +106,21 @@ vieScolaireRouter.post("/delete", async (req, res) => {
         role: decodedToken.role || ""
     }
     if (!isValidDataObject(currentVieScolaire)) {
-        return res.status(400).send({message: "incorrect format vieScolaire"})
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
     }
     if (!token.trim()) {
-        return res.status(400).send({message: "no token found"})
+        return res.status(400).send({ message: "no token found" })
     }
-    if(!verifyToken(token)){
-        return res.status(400).send({message: "unknow token"})
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
     }
     utilisateurModel.findOne(currentVieScolaire).then(
         data => {
-            if (!data) {    
+            if (!data) {
                 return res.status(400).send({ message: "vieScolaire not found" })
-            }else{
+            } else {
                 utilisateurModel.findOneAndDelete(currentVieScolaire).then(
-                    () => {return res.send({message : "vieScolaire delete"})}
+                    () => { return res.send({ message: "vieScolaire delete" }) }
                 )
             }
         }
@@ -136,36 +136,36 @@ vieScolaireRouter.post("/update", async (req, res) => {
         password: req.body.password ? crypto.createHash('sha256').update(req.body.password).digest("base64") : "",
         photo: req.body.photo || "",
         age: req.body.age || "",
-        telephone : req.body.telephone || ""
+        telephone: req.body.telephone || ""
     }
 
-    if(!verifyToken(token)){
-        return res.status(400).send({message: "unknow token"})
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
     }
     const currentUser = {
         email: req.body.email || "",
         password: req.body.password ? crypto.createHash('sha256').update(req.body.password).digest("base64") : "",
     }
     if (!isValidDataObject(currentUser)) {
-        return res.status(400).send({message: "missing "})
+        return res.status(400).send({ message: "missing " })
     }
-    if (!isValidTel(updatedVieScolaire.telephone)){
+    if (!isValidTel(updatedVieScolaire.telephone)) {
         return res.status(400).send({ message: "incorrect telephone format" })
     }
-    if(!isValidAge(updatedVieScolaire.age)){
+    if (!isValidAge(updatedVieScolaire.age)) {
         return res.status(400).send({ message: "incorrect age format" })
     }
     utilisateurModel.findOneAndUpdate(
-        { email: updatedVieScolaire.email, password: updatedVieScolaire.password},
-        { nom: updatedVieScolaire.nom, prenom: updatedVieScolaire.prenom, photo: updatedVieScolaire.photo, age : updatedVieScolaire.age, telephone : updatedVieScolaire.telephone }
+        { email: updatedVieScolaire.email, password: updatedVieScolaire.password },
+        { nom: updatedVieScolaire.nom, prenom: updatedVieScolaire.prenom, photo: updatedVieScolaire.photo, age: updatedVieScolaire.age, telephone: updatedVieScolaire.telephone }
     ).then(
         data => {
-            if(!data){
+            if (!data) {
                 return res.send({ message: "vieScolaire not found" })
             }
             return res.send(updatedVieScolaire)
         }
-    )     
+    )
 })
 
 module.exports = { vieScolaireRouter }

@@ -1,28 +1,28 @@
 const isValidEmail = (email) => {
-    if(typeof email != "string"){
+    if (typeof email != "string") {
         return false
     }
-    if(email.trim()==""){
+    if (email.trim() == "") {
         return false
     }
     const pattern = /[a-zA-Z0-9._\-]{1,30}[@][a-zA-Z0-9._\-]{4,12}[.]{1}[a-zA-Z]{2,4}/gm
     const match = email.match(pattern) || undefined
-    if(match==undefined){
+    if (match == undefined) {
         return false
     }
     return match.length == 1 && match[0].length == email.length
 }
 
 const isValidTel = (tel) => {
-    if(typeof tel != "string"){
+    if (typeof tel != "string") {
         return false
     }
-    if(tel.trim()==""){
+    if (tel.trim() == "") {
         return false
     }
     const pattern = /^0[6-7]\d{8}$/gm
     const match = tel.match(pattern) || undefined
-    if(match==undefined){
+    if (match == undefined) {
         return false
     }
     return match.length == 1 && match[0].length == tel.length
@@ -35,10 +35,10 @@ const isValidAge = (age) => {
 const isValidDataObject = (object) => {
     return Object.values(object).every(
         item => {
-            if(typeof item == "string"){
+            if (typeof item == "string") {
                 return item.trim() != ""
             }
-            if(typeof item == "number"){
+            if (typeof item == "number") {
                 return !isNaN(item)
             }
             return true
