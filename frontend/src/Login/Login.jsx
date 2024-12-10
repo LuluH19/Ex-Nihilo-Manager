@@ -21,6 +21,28 @@ export default function Connexion() {
         }));
     };
 
+    async function loginUser(email, password) {
+        try {
+            fetch('/eleve/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            })
+        } catch {
+            throw new Error('Erreur lors de la connexion', error);
+        }
+    }
+
+    async function registerUser(formData) {
+        try {
+            fetch('/eleve/register', {
+                method: 'POST',
+                body: formData
+            })
+        } catch {
+            throw new Error('Erreur lors de la connexion', error);
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
