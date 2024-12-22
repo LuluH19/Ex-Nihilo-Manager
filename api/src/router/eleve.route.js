@@ -2,7 +2,7 @@ const eleveRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
 const { utilisateurModel, noteModel, matiereModel } = require('../database/model.db')
-const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidAge } = require('../controller/check')
+const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt } = require('../controller/check')
 const { generateToken, verifyToken } = require("../middleware/jwt")
 
 eleveRouter.post("/login", async (req, res) => {
@@ -50,7 +50,7 @@ eleveRouter.post("/register", async (req, res) => {
     if (!isValidTel(currentEleve.telephone)) {
         return res.status(400).send({ message: "incorrect telephone format" })
     }
-    if (!isValidAge(currentEleve.age)) {
+    if (!isValidPosInt(currentEleve.age)) {
         return res.status(400).send({ message: "incorrect age format" })
     }
     utilisateurModel.findOne({ email: req.body.email }).then(
@@ -184,7 +184,7 @@ eleveRouter.post("/update", async (req, res) => {
     if (!isValidTel(updatedEleve.telephone)) {
         return res.status(400).send({ message: "incorrect telephone format" })
     }
-    if (!isValidAge(updatedEleve.age)) {
+    if (!isValidPosInt(updatedEleve.age)) {
         return res.status(400).send({ message: "incorrect age format" })
     }
     utilisateurModel.findOneAndUpdate(

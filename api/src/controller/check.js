@@ -28,8 +28,8 @@ const isValidTel = (tel) => {
     return match.length == 1 && match[0].length == tel.length
 }
 
-const isValidAge = (age) => {
-    return typeof age == "number"
+const isValidPosInt = (age) => {
+    return typeof age == "number" || (typeof age == "string" && /^\+?[1-9]\d*$/.test(age))
 }
 
 const isValidDataObject = (object) => {
@@ -50,4 +50,4 @@ const isValidPassword = (password) => {
     return password.length >= 6 && password.length <= 30 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password)
 }
 
-module.exports = { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidAge }
+module.exports = { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt: isValidPosInt }

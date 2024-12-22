@@ -1,8 +1,8 @@
 const vieScolaireRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
-const { utilisateurModel } = require('../database/model.db')
-const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidAge } = require('../controller/check')
+const { utilisateurModel, classeModel } = require('../database/model.db')
+const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt } = require('../controller/check')
 const { generateToken, verifyToken } = require("../middleware/jwt")
 
 vieScolaireRouter.post("/login", async (req, res) => {
@@ -50,7 +50,7 @@ vieScolaireRouter.post("/register", async (req, res) => {
     if (!isValidTel(currentVieScolaire.telephone)) {
         return res.status(400).send({ message: "incorrect telephone format" })
     }
-    if (!isValidAge(currentVieScolaire.age)) {
+    if (!isValidPosInt(currentVieScolaire.age)) {
         return res.status(400).send({ message: "incorrect age format" })
     }
     utilisateurModel.findOne({ email: req.body.email }).then(
@@ -152,7 +152,7 @@ vieScolaireRouter.post("/update", async (req, res) => {
     if (!isValidTel(updatedVieScolaire.telephone)) {
         return res.status(400).send({ message: "incorrect telephone format" })
     }
-    if (!isValidAge(updatedVieScolaire.age)) {
+    if (!isValidPosInt(updatedVieScolaire.age)) {
         return res.status(400).send({ message: "incorrect age format" })
     }
     utilisateurModel.findOneAndUpdate(
@@ -167,5 +167,241 @@ vieScolaireRouter.post("/update", async (req, res) => {
         }
     )
 })
-
+vieScolaireRouter.post("/classes/show", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentVieScolaire = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    if (!isValidDataObject(currentVieScolaire)) {
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentVieScolaire).then(
+        data => {
+            if (!data) {
+                return res.status(400).send({ message: "vieScolaire not found" })
+            } else {
+                classeModel.find({}).populate('eleves', "_id nom prenom email telephone photo").then(classes => {
+                    return res.send(classes)
+                })
+            }
+        }
+    )
+})
+vieScolaireRouter.post("/classes/info", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentVieScolaire = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    const currentClasse = req.body.idClasse
+    if (!isValidDataObject(currentVieScolaire)) {
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentVieScolaire).then(
+        data => {
+            if (!data) {
+                return res.status(400).send({ message: "vieScolaire not found" })
+            } else {
+                classeModel.findById(currentClasse).populate('eleves', "_id nom prenom email telephone photo").then(classe => {
+                    if (!classe) {
+                        return res.status(400).send({ message: "classe not found" })
+                    }else{
+                        return res.send(classe)
+                    }
+                })
+            }
+        }
+    )
+})
+vieScolaireRouter.post("/classes/create", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentVieScolaire = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    const currentClasse = {
+        nom: req.body.nom,
+        nbPlace: req.body.nbPlace
+    }
+    if (!isValidDataObject(currentVieScolaire)) {
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
+    }
+    if (!isValidDataObject(currentClasse)) {
+        return res.status(400).send({ message: "incorrect format classe" })
+    }
+    if (!isValidPosInt(currentClasse.nbPlace)) {
+        return res.status(400).send({ message: "nbplaces not a positive int" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    classeModel.create(currentClasse).then(classe => {
+        return res.send(classe)
+    })
+})
+vieScolaireRouter.post("/classes/remove", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentVieScolaire = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    const currentClasse = {
+        id: req.body.idclasse
+    }
+    if (!isValidDataObject(currentVieScolaire)) {
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
+    }
+    if (!isValidDataObject(currentClasse)) {
+        return res.status(400).send({ message: "incorrect format classe" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    classeModel.findByIdAndDelete(currentClasse.id).then(classe => {
+        return res.send(classe)
+    })
+})
+vieScolaireRouter.post("/classes/eleves/add", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentVieScolaire = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    const currentEleve = {
+        id: req.body.idEleve
+    }
+    const currentClasse = {
+        id: req.body.idClasse
+    }
+    if (!isValidDataObject(currentVieScolaire)) {
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
+    }
+    if (!isValidDataObject(currentEleve)) {
+        return res.status(400).send({ message: "incorrect format classe" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentVieScolaire).then(
+        data => {
+            if (!data) {
+                return res.status(400).send({ message: "vieScolaire not found" })
+            } else {
+                classeModel.findById(currentClasse.id).then(classe => {
+                    if (!classe) {
+                        return res.send({ message: "classe not found" })
+                    } else {
+                        utilisateurModel.findById(currentEleve.id).then(eleve => {
+                            if (!eleve) {
+                                return res.status(400).send({ message: "eleve not found" })
+                            } else if (eleve.role != "eleve") {
+                                return res.status(400).send({ message: "not a eleve" })
+                            } else {
+                                if (classe.eleves.includes(currentEleve.id)) {
+                                    return res.status(400).send({ message: "eleve already in classe" });
+                                } else if (classe.nbPlace == classe.eleves.length) {
+                                    return res.status(400).send({ message: "classe is full" })
+                                } else {
+                                    classe.eleves.push(currentEleve.id)
+                                    classe.save().then(
+                                        () => { return res.send({ message: "eleve added" }) }
+                                    )
+                                }
+                            }
+                        })
+                    }
+                })
+            }
+        }
+    )
+})
+vieScolaireRouter.post("/classes/eleves/remove", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentVieScolaire = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    const currentEleve = {
+        id: req.body.idEleve
+    }
+    const currentClasse = {
+        id: req.body.idClasse
+    }
+    if (!isValidDataObject(currentVieScolaire)) {
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
+    }
+    if (!isValidDataObject(currentEleve)) {
+        return res.status(400).send({ message: "incorrect format classe" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentVieScolaire).then(
+        data => {
+            if (!data) {
+                return res.status(400).send({ message: "vieScolaire not found" })
+            } else {
+                classeModel.findById(currentClasse.id).then(classe => {
+                    if (!classe) {
+                        return res.send({ message: "classe not found" })
+                    } else {
+                        utilisateurModel.findById(currentEleve.id).then(eleve => {
+                            if (!eleve) {
+                                return res.status(400).send({ message: "eleve not found" })
+                            } else if (eleve.role != "eleve") {
+                                return res.status(400).send({ message: "not a eleve" })
+                            } else {
+                                if (!classe.eleves.includes(currentEleve.id)) {
+                                    return res.status(400).send({ message: "eleve not in classe" })
+                                }else {
+                                    classe.eleves.splice(classe.eleves.indexOf(currentEleve.id), 1)
+                                    classe.save().then(
+                                        () => { return res.send({ message: "eleve remove" }) }
+                                    )
+                                }
+                            }
+                        })
+                    }
+                })
+            }
+        }
+    )
+})
 module.exports = { vieScolaireRouter }

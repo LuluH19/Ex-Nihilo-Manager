@@ -2,7 +2,7 @@ const profRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
 const { utilisateurModel, matiereModel, noteModel, classeModel } = require('../database/model.db')
-const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidAge } = require('../controller/check')
+const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt } = require('../controller/check')
 const { generateToken, verifyToken } = require('../middleware/jwt')
 
 profRouter.post("/login", async (req, res) => {
@@ -52,7 +52,7 @@ profRouter.post("/register", async (req, res) => {
     if (!isValidTel(currentProf.telephone)) {
         return res.status(400).send({ message: "incorrect telephone format" })
     }
-    if (!isValidAge(currentProf.age)) {
+    if (!isValidPosInt(currentProf.age)) {
         return res.status(400).send({ message: "incorrect age format" })
     }
     if (!currentMatiere.trim()) {
@@ -170,7 +170,7 @@ profRouter.post("/update", async (req, res) => {
     if (!isValidTel(updatedProf.telephone)) {
         return res.status(400).send({ message: "incorrect telephone format" })
     }
-    if (!isValidAge(updatedProf.age)) {
+    if (!isValidPosInt(updatedProf.age)) {
         return res.status(400).send({ message: "incorrect age format" })
     }
     utilisateurModel.findOneAndUpdate(
