@@ -32,7 +32,6 @@ const coursSchema = new mongoose.Schema({
     prof: { type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur', require: true },
     classe: { type: mongoose.Schema.Types.ObjectId, ref: 'Classe', require: true },
     matiere: { type: mongoose.Schema.Types.ObjectId, ref: 'Matiere', required: true },
-    agenda: { type: mongoose.Schema.Types.ObjectId, ref: 'Agenda', require: true },
     debut: { type: Date, require: true },
     fin: { type: Date, require: true }
 }, { versionKey: false })
