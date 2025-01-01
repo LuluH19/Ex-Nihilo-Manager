@@ -13,7 +13,10 @@ if (!fs.existsSync('./log')) {
 }
 const accessLogStream = fs.createWriteStream('./log/access.log', { flags: 'a' })
 //plugin
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}))
 app.use(express.json())
 app.use(morgan(':status || :method :date[clf] || :response-time || :url || :user-agent', { stream: accessLogStream }))
 app.use(morgan(':status || :method :date[clf] || :response-time || :url || :user-agent'))

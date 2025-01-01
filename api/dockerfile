@@ -1,7 +1,11 @@
 FROM node:21-alpine
-RUN mkdir /ex-nihilo-manager-api
-COPY . ./ex-nihilo-manager-api
-WORKDIR /ex-nihilo-manager-api
-RUN npm i
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
 EXPOSE 4000
-CMD ["npm","run","start"]
+CMD ["npm", "run", "dev"]

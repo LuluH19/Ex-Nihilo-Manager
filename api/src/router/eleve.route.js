@@ -113,20 +113,23 @@ eleveRouter.post("/notes", async (req, res) => {
     if (!verifyToken(token)) {
         return res.status(400).send({ message: "unknow token" })
     }
-    utilisateurModel.findOne(currentEleve, { password: 0, _id: 0 }).then(
-        eleve => {
-            if (!eleve) {
-                return res.status(400).send({ message: "eleve not found" })
-            } else {
-                noteModel.findOne({ eleve: currentEleve._id }).populate({ path: 'matiere', select: 'nom' }).then(
-                    notes => {
-                        return res.send(notes)
-                    }
-                )
-            }
+    try {
+        const eleve = await utilisateurModel.findOne(currentEleve);
+        if (!eleve) {
+            return res.status(400).send({ message: "eleve not found" });
         }
-    )
-})
+        
+        const notes = await noteModel.find({ eleve: currentEleve._id })
+            .populate({ path: 'matiere', select: 'nom' });
+            
+        // S'assurer qu'on renvoie un tableau
+        return res.send(Array.isArray(notes) ? notes : []);
+        
+    } catch (error) {
+        console.error('Error fetching notes:', error);
+        return res.status(500).send({ message: "Error fetching notes" });
+    }
+});
 
 //Delete
 eleveRouter.post("/delete", async (req, res) => {
