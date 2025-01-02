@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import './styles.css';
+import axios from 'axios';
+
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true);
     const [error, setError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [role, setRole] = useState('eleve');
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -12,6 +15,7 @@ export default function Login() {
         prenom: '',
         age: '',
         telephone: '',
+        matiere: '',
     });
 
     const validatePassword = (password) => {
@@ -37,55 +41,35 @@ export default function Login() {
             [name]: name === 'age' ? Number(value) : value
         }));
 
-        // Validation du mot de passe pendant la saisie
         if (name === 'password') {
             setPasswordError(validatePassword(value));
         }
     };
 
-    async function loginUser(email, password) {
+    async function loginUser(email, password, role) {
         try {
-            const response = await fetch("http://localhost:4000/eleve/login", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
+            const response = await axios.post(`http://localhost:4000/${role}/login`, { 
+                email, 
+                password 
             });
 
-            if (!response.ok) {
-                throw new Error('Erreur lors de la connexion');
-            }
-
-            return await response.text();
+            return response.data;
         } catch (error) {
-            throw new Error('Erreur lors de la connexion: ' + error.message);
+            throw new Error(error.response?.data?.message || 'Erreur lors de la connexion');
         }
     }
 
-    async function registerUser(formData) {
+    async function registerUser(formData, role) {
         try {
-            const response = await fetch('http://localhost:4000/eleve/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    photo: formData.photo || "default.jpg"
-                })
+            const response = await axios.post(`http://localhost:4000/${role}/register`, {
+                ...formData,
+                photo: formData.photo || "default.jpg"
             });
-
-            const data = await response.json();
             
-            if (!response.ok) {
-                throw new Error(data.message || 'Erreur lors de l\'inscription');
-            }
-
-            return data;
+            return response.data;
         } catch (error) {
             console.error('Erreur détaillée:', error);
-            throw new Error(error.message || 'Erreur lors de l\'inscription');
+            throw new Error(error.response?.data?.message || 'Erreur lors de l\'inscription');
         }
     }
 
@@ -95,22 +79,37 @@ export default function Login() {
         
         try {
             if (isLogin) {
-                const data = await loginUser(formData.email, formData.password);
+                const data = await loginUser(formData.email, formData.password, role);
                 localStorage.setItem('token', data);
-                window.location.href = '/dashboard';
+                switch(role) {
+                    case 'eleve':
+                        window.location.href = '/dashboard';
+                        break;
+                    case 'prof':
+                        window.location.href = '/dashboardprof';
+                        break;
+                    case 'vieScolaire':
+                        window.location.href = '/dashboardadmin';
+                        break;
+                    default:
+                        setError('Rôle non reconnu');
+                        break;
+                }
             } else {
-                // Vérification des champs obligatoires
                 if (!formData.nom || !formData.prenom || !formData.email || !formData.password || !formData.age || !formData.telephone) {
                     throw new Error('Tous les champs sont obligatoires');
                 }
 
-                // Validation du mot de passe
+                if (role === 'prof' && !formData.matiere) {
+                    throw new Error('La matière est obligatoire pour les professeurs');
+                }
+
                 const passwordValidationError = validatePassword(formData.password);
                 if (passwordValidationError) {
                     throw new Error(passwordValidationError);
                 }
                 
-                const data = await registerUser(formData);
+                const data = await registerUser(formData, role);
                 localStorage.setItem('token', data);
                 setIsLogin(true);
             }
@@ -126,6 +125,20 @@ export default function Login() {
             {error && <div className="error-message">{error}</div>}
             
             <form onSubmit={handleSubmit} className="auth-form">
+                <div className="form-group">
+                    <label htmlFor="role">Rôle</label>
+                    <select 
+                        name="role" 
+                        id="role" 
+                        value={role} 
+                        onChange={(e) => setRole(e.target.value)}
+                    >
+                        <option value="eleve">Élève</option>
+                        <option value="prof">Professeur</option>
+                        <option value="vieScolaire">Vie Scolaire</option>
+                    </select>
+                </div>
+
                 {!isLogin && (
                     <>
                         <div className="form-group">
@@ -144,6 +157,12 @@ export default function Login() {
                             <label htmlFor="telephone">Téléphone</label>
                             <input type="tel" name="telephone" id="telephone" value={formData.telephone} onChange={handleChange} />
                         </div>
+                        {role === 'prof' && (
+                            <div className="form-group">
+                                <label htmlFor="matiere">Matière</label>
+                                <input type="text" name="matiere" id="matiere" value={formData.matiere} onChange={handleChange} />
+                            </div>
+                        )}
                     </>
                 )}
                 

@@ -13,19 +13,24 @@ profRouter.post("/login", async (req, res) => {
     if (!isValidDataObject(currentProf)) {
         return res.status(400).send({ message: "incorrect format prof" })
     }
-    utilisateurModel.findOne({ email: currentProf.email, password: currentProf.password }).then(
-        prof => {
-            if (!prof) {
-                return res.status(400).send({ message: "prof not found" })
-            } else if (prof.role != "prof") {
-                return res.status(400).send({ message: "not a prof" })
-            } else {
-                return res.send(generateToken(prof))
-            }
+    try {
+        const prof = await utilisateurModel.findOne({ 
+            email: currentProf.email, 
+            password: currentProf.password 
+        });
+        
+        if (!prof) {
+            return res.status(400).send({ message: "prof not found" })
+        } else if (prof.role !== "prof") {
+            return res.status(400).send({ message: "not a prof" })
+        } else {
+            return res.send(generateToken(prof))
         }
-    )
-
-})
+    } catch (err) {
+        console.error('Erreur de connexion:', err);
+        return res.status(500).send({ message: "Erreur serveur" });
+    }
+});
 //Create
 profRouter.post("/register", async (req, res) => {
     const currentProf = {

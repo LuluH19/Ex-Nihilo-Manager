@@ -1,18 +1,46 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './Login/Login';
-import Dashboard from './Dashboard/Dashboard';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/Login/Login';
+import StudentDashboard from './components/Student/StudentDashboard';
+import TeacherDashboard from './components/Teacher/TeacherDashboard';
+import AdminDashboard from './components/Admin/AdminDashboard';
+import PrivateRoute from './components/PrivateRoute';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
-    return (
-        <Router future={{ v7_startTransition: true }}>
-            <Routes>
-                <Route path="/" element={<Navigate to="/login" replace />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-            </Routes>
-        </Router>
-    );
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route 
+            path="/student/*" 
+            element={
+              <PrivateRoute role="eleve">
+                <StudentDashboard />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/teacher/*" 
+            element={
+              <PrivateRoute role="prof">
+                <TeacherDashboard />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/admin/*" 
+            element={
+              <PrivateRoute role="vieScolaire">
+                <AdminDashboard />
+              </PrivateRoute>
+            } 
+          />
+          <Route path="/" element={<Login />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
 
 export default App; 

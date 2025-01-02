@@ -7,4 +7,13 @@ const instance = axios.create({
     }
 });
 
+// Ajout d'intercepteurs pour mieux gérer les erreurs
+instance.interceptors.response.use(
+    response => response,
+    error => {
+        console.error('Erreur API:', error.response?.data || error.message);
+        return Promise.reject(error);
+    }
+);
+
 export default instance;
