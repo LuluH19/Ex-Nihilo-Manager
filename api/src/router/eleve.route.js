@@ -117,7 +117,9 @@ eleveRouter.post("/notes", async (req, res) => {
         if (!eleve) {
             return res.status(400).send({ message: "eleve not found" })
         } else {
-            res.send(eleve)
+            noteModel.find({eleve:currentEleve._id}).populate({path:"matiere",target:"nom"}).then(notes=>{
+                res.send(Array.isArray(notes) ? notes : [])
+            })
         }
     })
 })
