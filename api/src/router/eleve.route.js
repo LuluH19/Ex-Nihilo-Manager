@@ -1,7 +1,7 @@
 const eleveRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
-const { utilisateurModel, noteModel, matiereModel } = require('../database/model.db')
+const { utilisateurModel, noteModel, matiereModel, classeModel, coursModel } = require('../database/model.db')
 const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt } = require('../controller/check')
 const { generateToken, verifyToken } = require("../middleware/jwt")
 
@@ -113,23 +113,14 @@ eleveRouter.post("/notes", async (req, res) => {
     if (!verifyToken(token)) {
         return res.status(400).send({ message: "unknow token" })
     }
-    try {
-        const eleve = await utilisateurModel.findOne(currentEleve);
+    utilisateurModel.findOne(currentEleve).then(eleve => {
         if (!eleve) {
-            return res.status(400).send({ message: "eleve not found" });
+            return res.status(400).send({ message: "eleve not found" })
+        } else {
+            res.send(Array.isArray(notes) ? notes : [])
         }
-        
-        const notes = await noteModel.find({ eleve: currentEleve._id })
-            .populate({ path: 'matiere', select: 'nom' });
-            
-        // S'assurer qu'on renvoie un tableau
-        return res.send(Array.isArray(notes) ? notes : []);
-        
-    } catch (error) {
-        console.error('Error fetching notes:', error);
-        return res.status(500).send({ message: "Error fetching notes" });
-    }
-});
+    })
+})
 
 //Delete
 eleveRouter.post("/delete", async (req, res) => {
@@ -201,6 +192,40 @@ eleveRouter.post("/update", async (req, res) => {
             return res.send(updatedEleve)
         }
     )
+})
+
+eleveRouter.post("/cours", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentEleve = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    if (!isValidDataObject(currentEleve)) {
+        return res.status(400).send({ message: "incorrect format eleve" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentEleve).then(eleve => {
+        if (!eleve) {
+            return res.status(400).send({ message: "eleve not found" })
+        } else {
+            classeModel.findOne({ eleves: currentEleve._id }).then(classe => {
+                if (!classe) {
+                    return res.status(400).send({ message: "no class found for this student" })
+                } else {
+                    coursModel.find({ classe: classe._id }).populate({ path: "prof", select: "_id email nom prenom" }).populate({ path: "matiere", select: "nom _id" }).then(cours => {
+                        res.send(Array.isArray(cours) ? cours : [])
+                    })
+                }
+            })
+        }
+    })
 })
 
 module.exports = { eleveRouter }

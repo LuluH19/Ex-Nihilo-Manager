@@ -1,7 +1,7 @@
 const profRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
-const { utilisateurModel, matiereModel, noteModel, classeModel } = require('../database/model.db')
+const { utilisateurModel, matiereModel, noteModel, classeModel, coursModel } = require('../database/model.db')
 const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt } = require('../controller/check')
 const { generateToken, verifyToken } = require('../middleware/jwt')
 
@@ -13,12 +13,7 @@ profRouter.post("/login", async (req, res) => {
     if (!isValidDataObject(currentProf)) {
         return res.status(400).send({ message: "incorrect format prof" })
     }
-    try {
-        const prof = await utilisateurModel.findOne({ 
-            email: currentProf.email, 
-            password: currentProf.password 
-        });
-        
+    utilisateurModel.findOne(currentProf).then(prof => {
         if (!prof) {
             return res.status(400).send({ message: "prof not found" })
         } else if (prof.role !== "prof") {
@@ -26,11 +21,8 @@ profRouter.post("/login", async (req, res) => {
         } else {
             return res.send(generateToken(prof))
         }
-    } catch (err) {
-        console.error('Erreur de connexion:', err);
-        return res.status(500).send({ message: "Erreur serveur" });
-    }
-});
+    })
+})
 //Create
 profRouter.post("/register", async (req, res) => {
     const currentProf = {
@@ -102,6 +94,8 @@ profRouter.post("/info", async (req, res) => {
         prof => {
             if (!prof) {
                 return res.status(400).send({ message: "prof not found" })
+            } else if (prof.role != "prof") {
+                return res.send({ message: "user isnt a prof" })
             } else {
                 matiereModel.findOne({ prof: currentProf._id }).then(
                     matiere => {
@@ -139,17 +133,20 @@ profRouter.post("/delete", async (req, res) => {
         prof => {
             if (!prof) {
                 return res.status(400).send({ message: "prof not found" })
-            }
-            utilisateurModel.findOneAndDelete(currentProf).then(
-                () => {
-                    matiereModel.findOneAndDelete({ prof: prof._id }).then(
-                        () => {
-                            return res.send({ message: "prof delete" })
-                        }
-                    )
+            } else if (prof.role != "prof") {
+                return res.send({ message: "user isnt a prof" })
+            } else {
+                utilisateurModel.findOneAndDelete(currentProf).then(
+                    () => {
+                        matiereModel.findOneAndDelete({ prof: prof._id }).then(
+                            () => {
+                                return res.send({ message: "prof delete" })
+                            }
+                        )
 
-                }
-            )
+                    }
+                )
+            }
         }
     )
 })
@@ -191,6 +188,44 @@ profRouter.post("/update", async (req, res) => {
     )
 
 })
+profRouter.post("/eleves", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentProf = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    if (!isValidDataObject(currentProf)) {
+        return res.status(400).send({ message: "incorrect format prof" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentProf).then(
+        prof => {
+            if (!prof) {
+                return res.send({ message: "prof not found" })
+            } else if (prof.role != "prof") {
+                return res.send({ message: "user isnt a prof" })
+            } else {
+                utilisateurModel.find({ role: "eleve" }, { password: 0 }).then(
+                    eleves => {
+                        res.send(Array.isArray(eleves) ? eleves : [])
+                    }
+                )
+            }
+        }
+    )
+    utilisateurModel.find({ role: "eleve" }, { password: 0 }).then(
+        eleves => {
+            res.send(Array.isArray(eleves) ? eleves : [])
+        }
+    )
+})
 profRouter.post("/notes/eleve", async (req, res) => {
     const token = req.headers.authorization || ""
     const decodedToken = jwt.decode(token)
@@ -199,7 +234,7 @@ profRouter.post("/notes/eleve", async (req, res) => {
         _id: decodedToken.id || "",
         role: decodedToken.role || ""
     }
-    const currentEleve = req.body.emailEleve
+    const currentEleve = req.body.idEleve
     if (!isValidDataObject(currentProf)) {
         return res.status(400).send({ message: "incorrect format prof" })
     }
@@ -216,12 +251,14 @@ profRouter.post("/notes/eleve", async (req, res) => {
         prof => {
             if (!prof) {
                 return res.send({ message: "prof not found" })
+            } else if (prof.role != "prof") {
+                return res.send({ message: "user isnt a prof" })
             } else {
-                utilisateurModel.findOne({_id:currentEleve}).then(eleve=>{
-                    if(!eleve){
-                        return res.send({message:"eleve not found"})
-                    }else{
-                        noteModel.find({ eleve: currentEleve._id }).populate({ path: 'matiere', select: 'nom' }).then(notes=>{
+                utilisateurModel.findOne({ _id: currentEleve }).then(eleve => {
+                    if (!eleve) {
+                        return res.send({ message: "eleve not found" })
+                    } else {
+                        noteModel.find({ eleve: currentEleve._id }).populate({ path: 'matiere', select: 'nom' }).then(notes => {
                             return res.send(Array.isArray(notes) ? notes : [])
                         })
                     }
@@ -259,13 +296,15 @@ profRouter.post("/notes/add", async (req, res) => {
         prof => {
             if (!prof) {
                 return res.send({ message: "prof not found" })
+            } else if (prof.role != "prof") {
+                return res.send({ message: "user isnt a prof" })
             } else {
                 utilisateurModel.findOne({ email: currentEleve.email }).then(
                     eleve => {
                         if (!eleve) {
                             return res.send({ message: "eleve not found" })
                         } else if (eleve.role != "eleve") {
-                            return res.send({ message: "eleves isnt a eleve" })
+                            return res.send({ message: "user isnt a eleve" })
                         } else {
                             matiereModel.findOne({ prof: prof._id }).then(
                                 matiere => {
@@ -286,5 +325,34 @@ profRouter.post("/notes/add", async (req, res) => {
     )
 })
 
+profRouter.post("/cours", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentProf = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    if (!isValidDataObject(currentProf)) {
+        return res.status(400).send({ message: "incorrect format eleve" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentProf).then(prof => {
+        if (!prof) {
+            return res.status(400).send({ message: "prof not found" })
+        } else if (prof.role != "prof") {
+            return res.send({ message: "user isnt a prof" })
+        } else {
+            coursModel.find({ prof: currentProf._id }).populate({ path: "matiere", select: "nom" }).populate({ path: "classe", select: "nom" }).then(cours => {
+                res.send(Array.isArray(cours) ? cours : [])
+            })
+        }
+    })
+})
 
 module.exports = { profRouter }

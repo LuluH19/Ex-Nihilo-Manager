@@ -1,7 +1,7 @@
 const vieScolaireRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
-const { utilisateurModel, classeModel } = require('../database/model.db')
+const { utilisateurModel, classeModel, coursModel } = require('../database/model.db')
 const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt } = require('../controller/check')
 const { generateToken, verifyToken } = require("../middleware/jwt")
 
@@ -89,6 +89,8 @@ vieScolaireRouter.post("/info", async (req, res) => {
         data => {
             if (!data) {
                 return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
                 return res.send(data)
             }
@@ -118,6 +120,8 @@ vieScolaireRouter.post("/delete", async (req, res) => {
         data => {
             if (!data) {
                 return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
                 utilisateurModel.findOneAndDelete(currentVieScolaire).then(
                     () => { return res.send({ message: "vieScolaire delete" }) }
@@ -162,8 +166,11 @@ vieScolaireRouter.post("/update", async (req, res) => {
         data => {
             if (!data) {
                 return res.send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
+            } else {
+                return res.send(updatedVieScolaire)
             }
-            return res.send(updatedVieScolaire)
         }
     )
 })
@@ -188,6 +195,8 @@ vieScolaireRouter.post("/classes/show", async (req, res) => {
         data => {
             if (!data) {
                 return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
                 classeModel.find({}).populate('eleves', "_id nom prenom email telephone photo").then(classes => {
                     return res.send(classes)
@@ -218,11 +227,13 @@ vieScolaireRouter.post("/classes/info", async (req, res) => {
         data => {
             if (!data) {
                 return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
                 classeModel.findById(currentClasse).populate('eleves', "_id nom prenom email telephone photo").then(classe => {
                     if (!classe) {
                         return res.status(400).send({ message: "classe not found" })
-                    }else{
+                    } else {
                         return res.send(classe)
                     }
                 })
@@ -257,9 +268,19 @@ vieScolaireRouter.post("/classes/create", async (req, res) => {
     if (!verifyToken(token)) {
         return res.status(400).send({ message: "unknow token" })
     }
-    classeModel.create(currentClasse).then(classe => {
-        return res.send(classe)
-    })
+    utilisateurModel.findOne(currentVieScolaire).then(
+        data => {
+            if (!data) {
+                return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
+            } else {
+                classeModel.create(currentClasse).then(classe => {
+                    return res.send(classe)
+                })
+            }
+        }
+    )
 })
 vieScolaireRouter.post("/classes/remove", async (req, res) => {
     const token = req.headers.authorization || ""
@@ -284,9 +305,20 @@ vieScolaireRouter.post("/classes/remove", async (req, res) => {
     if (!verifyToken(token)) {
         return res.status(400).send({ message: "unknow token" })
     }
-    classeModel.findByIdAndDelete(currentClasse.id).then(classe => {
-        return res.send(classe)
-    })
+
+    utilisateurModel.findOne(currentVieScolaire).then(
+        data => {
+            if (!data) {
+                return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
+            } else {
+                classeModel.findByIdAndDelete(currentClasse.id).then(classe => {
+                    return res.send({ message: "classe deleted" })
+                })
+            }
+        }
+    )
 })
 vieScolaireRouter.post("/classes/eleves/add", async (req, res) => {
     const token = req.headers.authorization || ""
@@ -318,6 +350,8 @@ vieScolaireRouter.post("/classes/eleves/add", async (req, res) => {
         data => {
             if (!data) {
                 return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
                 classeModel.findById(currentClasse.id).then(classe => {
                     if (!classe) {
@@ -377,6 +411,8 @@ vieScolaireRouter.post("/classes/eleves/remove", async (req, res) => {
         data => {
             if (!data) {
                 return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
                 classeModel.findById(currentClasse.id).then(classe => {
                     if (!classe) {
@@ -390,7 +426,7 @@ vieScolaireRouter.post("/classes/eleves/remove", async (req, res) => {
                             } else {
                                 if (!classe.eleves.includes(currentEleve.id)) {
                                     return res.status(400).send({ message: "eleve not in classe" })
-                                }else {
+                                } else {
                                     classe.eleves.splice(classe.eleves.indexOf(currentEleve.id), 1)
                                     classe.save().then(
                                         () => { return res.send({ message: "eleve remove" }) }
@@ -404,4 +440,38 @@ vieScolaireRouter.post("/classes/eleves/remove", async (req, res) => {
         }
     )
 })
+
+vieScolaireRouter.post("/cours", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentVieScolaire = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    if (!isValidDataObject(currentVieScolaire)) {
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentVieScolaire).then(
+        data => {
+            if (!data) {
+                return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
+            } else {
+                coursModel.find().populate({ path: "matiere", select: "nom" }).populate({ path: "prof", select: "_id email nom prenom" }).populate({ path: "classe", select: "nom" }).then(cours => {
+                    res.send(Array.isArray(cours) ? cours : [])
+                })
+            }
+        }
+    )
+})
+
+
 module.exports = { vieScolaireRouter }
