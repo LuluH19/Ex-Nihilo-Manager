@@ -44,7 +44,7 @@ profRouter.post("/register", async (req, res) => {
         role: "prof"
     }
     const currentMatiere = req.body.matiere || ""
-
+    console.log(req.body)
     if (!isValidDataObject(currentProf)) {
         return res.status(400).send({ message: "incorrect format prof" })
     }
@@ -103,7 +103,7 @@ profRouter.post("/info", async (req, res) => {
             if (!prof) {
                 return res.status(400).send({ message: "prof not found" })
             } else {
-                matiereModel.findOne({ prof: currentProf.id }).then(
+                matiereModel.findOne({ prof: currentProf._id }).then(
                     matiere => {
                         if (!matiere) {
                             return res.status(400).send({ message: "matiere not found" })
@@ -191,6 +191,46 @@ profRouter.post("/update", async (req, res) => {
     )
 
 })
+profRouter.post("/notes/eleve", async (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentProf = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    const currentEleve = req.body.emailEleve
+    if (!isValidDataObject(currentProf)) {
+        return res.status(400).send({ message: "incorrect format prof" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    if (!currentEleve) {
+        return res.status(400).send({ message: "missing eleve" })
+    }
+    utilisateurModel.findOne(currentProf).then(
+        prof => {
+            if (!prof) {
+                return res.send({ message: "prof not found" })
+            } else {
+                utilisateurModel.findOne({_id:currentEleve}).then(eleve=>{
+                    if(!eleve){
+                        return res.send({message:"eleve not found"})
+                    }else{
+                        noteModel.find({ eleve: currentEleve._id }).populate({ path: 'matiere', select: 'nom' }).then(notes=>{
+                            return res.send(Array.isArray(notes) ? notes : [])
+                        })
+                    }
+                })
+            }
+        }
+    )
+})
+
 profRouter.post("/notes/add", async (req, res) => {
     const token = req.headers.authorization || ""
     const decodedToken = jwt.decode(token)
