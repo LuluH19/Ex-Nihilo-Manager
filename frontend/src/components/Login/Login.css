@@ -4,6 +4,7 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background-color: white;
 }
 
 .login-container h2 {
@@ -45,6 +46,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  margin-top: 10px;
 }
 
 .login-container button:hover {
@@ -55,4 +57,20 @@
   color: red;
   text-align: center;
   margin-bottom: 10px;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.toggle-mode {
+  width: 100%;
+  margin-top: 15px;
+  background-color: transparent !important;
+  color: #007bff !important;
+  text-decoration: underline;
+}
+
+.toggle-mode:hover {
+  color: #0056b3 !important;
+  background-color: transparent !important;
 } 
