@@ -1,9 +1,10 @@
 const vieScolaireRouter = require('express').Router()
 const crypto = require("node:crypto")
 const jwt = require("jsonwebtoken")
-const { utilisateurModel, classeModel, coursModel } = require('../database/model.db')
+const { utilisateurModel, classeModel, coursModel, noteModel } = require('../database/model.db')
 const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt } = require('../controller/check')
 const { generateToken, verifyToken } = require("../middleware/jwt")
+const { cp } = require('node:fs')
 
 vieScolaireRouter.post("/login", async (req, res) => {
     const currentVieScolaire = {
@@ -174,6 +175,50 @@ vieScolaireRouter.post("/update", async (req, res) => {
         }
     )
 })
+
+vieScolaireRouter.post("/eleves", (req, res) => {
+    const token = req.headers.authorization || ""
+    const decodedToken = jwt.decode(token)
+    const currentVieScolaire = {
+        email: decodedToken.email || "",
+        _id: decodedToken.id || "",
+        role: decodedToken.role || ""
+    }
+    if (!isValidDataObject(currentVieScolaire)) {
+        return res.status(400).send({ message: "incorrect format vieScolaire" })
+    }
+    if (!token.trim()) {
+        return res.status(400).send({ message: "no token found" })
+    }
+    if (!verifyToken(token)) {
+        return res.status(400).send({ message: "unknow token" })
+    }
+    utilisateurModel.findOne(currentVieScolaire, { password: 0, _id: 0 }).then(
+        data => {
+            if (!data) {
+                return res.status(400).send({ message: "vieScolaire not found" })
+            } else if (data.role != "vieScolaire") {
+                return res.status(400).send({ message: "user isnt a vieScolaire" })
+            } else {
+                utilisateurModel.find({ role: "eleve" }, { password: 0 }).then(
+                    eleves => {
+                        noteModel.find().populate({ path: "matiere", select: "nom" }).then(
+                            notes => {
+                                const output = eleves.map(eleve => ({
+                                    ...eleve.toObject(),
+                                    notes: notes.filter(note => note.eleve.toString() === eleve._id.toString())
+                                        .map(note => ({ valeur: note.valeur, matiere: note.matiere.nom }))
+                                }))
+                                res.send(Array.isArray(output) ? output : [])
+                            })
+                    }
+                )
+            }
+        }
+    )
+})
+
+
 vieScolaireRouter.post("/classes/show", async (req, res) => {
     const token = req.headers.authorization || ""
     const decodedToken = jwt.decode(token)

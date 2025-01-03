@@ -214,7 +214,15 @@ profRouter.post("/eleves", async (req, res) => {
             } else {
                 utilisateurModel.find({ role: "eleve" }, { password: 0 }).then(
                     eleves => {
-                        res.send(Array.isArray(eleves) ? eleves : [])
+                        noteModel.find().populate({ path: "matiere", select: "nom" }).then(
+                            notes => {
+                                const output = eleves.map(eleve => ({
+                                    ...eleve.toObject(),
+                                    notes: notes.filter(note => note.eleve.toString() === eleve._id.toString())
+                                        .map(note => ({ valeur: note.valeur, matiere: note.matiere.nom }))
+                                }))
+                                res.send(Array.isArray(output) ? output : [])
+                            })
                     }
                 )
             }
@@ -234,7 +242,8 @@ profRouter.post("/notes/eleve", async (req, res) => {
         _id: decodedToken.id || "",
         role: decodedToken.role || ""
     }
-    const currentEleve = req.body.idEleve
+    const currentEleve = req.body.emailEleve || ""
+
     if (!isValidDataObject(currentProf)) {
         return res.status(400).send({ message: "incorrect format prof" })
     }
@@ -254,7 +263,7 @@ profRouter.post("/notes/eleve", async (req, res) => {
             } else if (prof.role != "prof") {
                 return res.send({ message: "user isnt a prof" })
             } else {
-                utilisateurModel.findOne({ _id: currentEleve }).then(eleve => {
+                utilisateurModel.findOne({ email: currentEleve }).then(eleve => {
                     if (!eleve) {
                         return res.send({ message: "eleve not found" })
                     } else {
