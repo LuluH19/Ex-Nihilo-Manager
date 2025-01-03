@@ -1,1 +1,25 @@
-{"name":"exnihilo-api","version":"1.0.0","main":"server.js","scripts":{"start":"node server.js","dev":"nodemon server.js"},"author":"","license":"ISC","description":"","dependencies":{"cors":"^2.8.5","dotenv":"^16.4.5","dotenv-expand":"^12.0.1","express":"^4.21.1","jsonwebtoken":"^9.0.2","mongoose":"^8.8.3","morgan":"^1.10.0","nodemon":"^3.1.7"}}
+{
+  "name": "exnihilo-api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "nodemonConfig": {
+    "ignore":["api/*.json"]
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^12.0.1",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.3",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.7"
+  }
+}

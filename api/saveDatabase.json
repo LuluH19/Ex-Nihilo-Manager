@@ -1,0 +1,568 @@
+{
+  "users": [
+    {
+      "_id": "674f062f1c86f75b56ef55d8",
+      "nom": "vivien",
+      "prenom": "parsis",
+      "age": 22,
+      "email": "vivien.parsis@gmail.com",
+      "password": "rzSRXaNT3q5dVozdJjEoEIzi0epJKcFBOGvuZuTdDQ4=",
+      "telephone": "0612345678",
+      "photo": "http://example.com",
+      "role": "prof"
+    },
+    {
+      "_id": "674f24782bb94ee032f3e85e",
+      "nom": "vivien",
+      "prenom": "parsis",
+      "age": 22,
+      "email": "vivien.parsis1@gmail.com",
+      "password": "rzSRXaNT3q5dVozdJjEoEIzi0epJKcFBOGvuZuTdDQ4=",
+      "telephone": "0612345678",
+      "photo": "http://example.com",
+      "role": "eleve"
+    },
+    {
+      "_id": "6767fd90b8afc67260b505b3",
+      "nom": "Parsis",
+      "prenom": "Vivien",
+      "age": 22,
+      "email": "vivien.parsis.vie@gmail.com",
+      "password": "HSxCV8ogjV564HBsdoJLUHNrLkh9dl9L/RYwP6NPD/w=",
+      "telephone": "0612345678",
+      "photo": "http://exemple.com",
+      "role": "vieScolaire"
+    },
+    {
+      "_id": "676806bfeebd54c419b476df",
+      "nom": "vivien",
+      "prenom": "parsis",
+      "age": 22,
+      "email": "vivien.parsis1@gmail.com",
+      "password": "rzSRXaNT3q5dVozdJjEoEIzi0epJKcFBOGvuZuTdDQ4=",
+      "telephone": "0612345678",
+      "photo": "http://example.com",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e3b5596ca8d35583eb6b",
+      "nom": "Leclerc",
+      "prenom": "Marie",
+      "age": 28,
+      "email": "marie.leclerc@example.com",
+      "password": "Xy8b6Qw3+7l=",
+      "telephone": "0676543210",
+      "photo": "photo_marie.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e3b5596ca8d35583eb6c",
+      "nom": "Rousseau",
+      "prenom": "Paul",
+      "age": 45,
+      "email": "paul.rousseau@example.com",
+      "password": "Zj9v5Tw8+1q=",
+      "telephone": "0658976342",
+      "photo": "photo_paul.png",
+      "role": "prof"
+    },
+    {
+      "_id": "6776e3b5596ca8d35583eb6d",
+      "nom": "Durand",
+      "prenom": "Sophie",
+      "age": 32,
+      "email": "sophie.durand@example.com",
+      "password": "Km7Xc9p5+2t=",
+      "telephone": "0767894523",
+      "photo": "photo_sophie.png",
+      "role": "vieScolaire"
+    },
+    {
+      "_id": "6776e4dbecd1d3047699c50d",
+      "nom": "TestEleve",
+      "prenom": "Etudiant",
+      "age": 20,
+      "email": "test.eleve@example.com",
+      "password": "B0gPuehbk5avBvAGzxyVAkryUxxl+1Bc+9Ct0eLzFXM=",
+      "telephone": "0671234567",
+      "photo": "photo_test_eleve.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e55eecd1d3047699c516",
+      "nom": "TestVieScolaire",
+      "prenom": "Admin",
+      "age": 40,
+      "email": "test.vieScolaire@example.com",
+      "password": "NiPhv2AuqYQ6yu2RnN4sEQ2pYgw1F8Jp6HWYWaEp6So=",
+      "telephone": "0674567890",
+      "photo": "photo_test_vieScolaire.png",
+      "role": "vieScolaire"
+    },
+    {
+      "_id": "6776e57decd1d3047699c519",
+      "nom": "TestProf",
+      "prenom": "Enseignant",
+      "age": 35,
+      "email": "test.prof@example.com",
+      "password": "q1vq6XhMhLb8dthQBxUuk04//jJIZptrpqvwZ0PBTYU=",
+      "telephone": "0659876543",
+      "photo": "photo_test_prof.png",
+      "role": "prof"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecb4",
+      "nom": "Martin",
+      "prenom": "Camille",
+      "age": 19,
+      "email": "camille.martin@example.com",
+      "password": "GcrpqOi5NMuXOYO9/JJxUqNd+ka8D9KvH9yQO26E2Nk=",
+      "telephone": "0671234567",
+      "photo": "photo_camille.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecb5",
+      "nom": "Dupont",
+      "prenom": "Louis",
+      "age": 21,
+      "email": "louis.dupont@example.com",
+      "password": "T/yRQTAJHt43Z7uzNdYBsQFwAO4AW7Q1cZj7EKuDj/0=",
+      "telephone": "0659876543",
+      "photo": "photo_louis.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecb6",
+      "nom": "Morel",
+      "prenom": "Emma",
+      "age": 20,
+      "email": "emma.morel@example.com",
+      "password": "2TZoZXQQjAb0vN5O27LKr2EuOygMdZVQvno6hbsZZu4=",
+      "telephone": "0674567890",
+      "photo": "photo_emma.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecb7",
+      "nom": "Bernard",
+      "prenom": "Lucas",
+      "age": 22,
+      "email": "lucas.bernard@example.com",
+      "password": "eN6r6yz8IcZ5XtAQSGAyo8tyXaK9DmHgHY9+G4XxyZM=",
+      "telephone": "0676543210",
+      "photo": "photo_lucas.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecb8",
+      "nom": "Petit",
+      "prenom": "Chloe",
+      "age": 18,
+      "email": "chloe.petit@example.com",
+      "password": "D6ZcbWo7m9A0KPQuIfgpC6B20HzU9VpRz1xoHrHwiHI=",
+      "telephone": "0673216547",
+      "photo": "photo_chloe.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecb9",
+      "nom": "Roux",
+      "prenom": "Nathan",
+      "age": 20,
+      "email": "nathan.roux@example.com",
+      "password": "cGs3CmZIrnFNuBRCTr0KwcAUP74tnB5nEceZLg3xIhU=",
+      "telephone": "0679876543",
+      "photo": "photo_nathan.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecba",
+      "nom": "Simon",
+      "prenom": "Sarah",
+      "age": 19,
+      "email": "sarah.simon@example.com",
+      "password": "ZlAmWxDfFPPZWa/lBfZYJq2JGU1E3w9Fbg46RbZmDCw=",
+      "telephone": "0671325468",
+      "photo": "photo_sarah.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecbb",
+      "nom": "Garcia",
+      "prenom": "Hugo",
+      "age": 21,
+      "email": "hugo.garcia@example.com",
+      "password": "D8uF4MIuC9hICpNhyLvVjsOx6+/CJhihVb4uD+cYoTw=",
+      "telephone": "0654329876",
+      "photo": "photo_hugo.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecbc",
+      "nom": "Lemoine",
+      "prenom": "Manon",
+      "age": 18,
+      "email": "manon.lemoine@example.com",
+      "password": "nRDf1ELsJ8eJvqT93zSaWbzA5J07QfgAW8fFOxu2Itg=",
+      "telephone": "0678901234",
+      "photo": "photo_manon.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecbd",
+      "nom": "Fontaine",
+      "prenom": "Leo",
+      "age": 22,
+      "email": "leo.fontaine@example.com",
+      "password": "RKRWAyAVfXnYMBP3SeDYCr3EYkzF8JotnPeahwwXZK4=",
+      "telephone": "0674321890",
+      "photo": "photo_leo.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecbe",
+      "nom": "Durand",
+      "prenom": "Lea",
+      "age": 20,
+      "email": "lea.durand@example.com",
+      "password": "BZmpt4gZWWRe+3RoCfohN/9LFodfVQvVP9r1k2PHLls=",
+      "telephone": "0676548970",
+      "photo": "photo_lea.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecbf",
+      "nom": "Chevalier",
+      "prenom": "Ethan",
+      "age": 19,
+      "email": "ethan.chevalier@example.com",
+      "password": "NMU0JBuFnjLS5Er/NcFV4E3eB4RGWtN4i8J0MtSDXC4=",
+      "telephone": "0679801234",
+      "photo": "photo_ethan.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecc0",
+      "nom": "Renaud",
+      "prenom": "Alice",
+      "age": 21,
+      "email": "alice.renaud@example.com",
+      "password": "iU2EZBKwEoT50tnXg0ETRIb43w21fMbGlFVDvFxprLk=",
+      "telephone": "0673498210",
+      "photo": "photo_alice.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecc1",
+      "nom": "Perrot",
+      "prenom": "Arthur",
+      "age": 22,
+      "email": "arthur.perrot@example.com",
+      "password": "kMBKlWmEy5U0JxtRAQoLpVQHqekcNbEOfG34Jh5rLys=",
+      "telephone": "0675237890",
+      "photo": "photo_arthur.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecc2",
+      "nom": "Clément",
+      "prenom": "Julie",
+      "age": 18,
+      "email": "julie.clement@example.com",
+      "password": "RT09nWNZ8NcFHLIf6G5J6LFRCFOsaPRxlWbVshVRhCk=",
+      "telephone": "0676541230",
+      "photo": "photo_julie.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecc3",
+      "nom": "Charpentier",
+      "prenom": "Victor",
+      "age": 20,
+      "email": "victor.charpentier@example.com",
+      "password": "FsXtCo5Xx9T2LHK1NiI5vEzZTDUCpQ5+/Tp4MHQQV+U=",
+      "telephone": "0679806543",
+      "photo": "photo_victor.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecc4",
+      "nom": "Blanc",
+      "prenom": "Sophia",
+      "age": 19,
+      "email": "sophia.blanc@example.com",
+      "password": "A9mGcvQOoV1k2IqLPeVQVHJVg+gEoxRj9RXW6ZRDkVY=",
+      "telephone": "0671234908",
+      "photo": "photo_sophia.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecc5",
+      "nom": "Henry",
+      "prenom": "Thomas",
+      "age": 20,
+      "email": "thomas.henry@example.com",
+      "password": "pWA0FqMWVhP+5o5REmW+bHwvE3WzvlpxS/46TQGWhVo=",
+      "telephone": "0678912345",
+      "photo": "photo_thomas.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecc6",
+      "nom": "Gauthier",
+      "prenom": "Clara",
+      "age": 21,
+      "email": "clara.gauthier@example.com",
+      "password": "BX8UJ1KtWME9JXqtLgHFwJcFvWyE+Gp4MspCQkOfsOc=",
+      "telephone": "0676549870",
+      "photo": "photo_clara.png",
+      "role": "eleve"
+    },
+    {
+      "_id": "6776e8af596ca8d35583ecc7",
+      "nom": "Garnier",
+      "prenom": "Alexandre",
+      "age": 18,
+      "email": "alexandre.garnier@example.com",
+      "password": "RpHpCo6LX1HqTRJMSwLTKCrYgfVFOKX2XrYNE3cNknQ=",
+      "telephone": "0679123408",
+      "photo": "photo_alexandre.png",
+      "role": "eleve"
+    }
+  ],
+  "notes": [
+    {
+      "_id": "6776ec79596ca8d35583ee57",
+      "eleve": "674f24782bb94ee032f3e85e",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "valeur": 15
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee58",
+      "eleve": "676806bfeebd54c419b476df",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "valeur": 12
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee59",
+      "eleve": "6776e3b5596ca8d35583eb6b",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "valeur": 14
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee5a",
+      "eleve": "6776e4dbecd1d3047699c50d",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "valeur": 18
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee5b",
+      "eleve": "6776e8af596ca8d35583ecb4",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "valeur": 13
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee5c",
+      "eleve": "6776e8af596ca8d35583ecb5",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "valeur": 10
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee5d",
+      "eleve": "6776e8af596ca8d35583ecb6",
+      "matiere": "6776e57decd1d3047699c51b",
+      "valeur": 16
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee5e",
+      "eleve": "6776e8af596ca8d35583ecb7",
+      "matiere": "6776e57decd1d3047699c51b",
+      "valeur": 12
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee5f",
+      "eleve": "6776e8af596ca8d35583ecb8",
+      "matiere": "6776e57decd1d3047699c51b",
+      "valeur": 17
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee60",
+      "eleve": "6776e8af596ca8d35583ecb9",
+      "matiere": "6776e57decd1d3047699c51b",
+      "valeur": 14
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee61",
+      "eleve": "6776e8af596ca8d35583ecba",
+      "matiere": "6776e57decd1d3047699c51b",
+      "valeur": 15
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee62",
+      "eleve": "6776e8af596ca8d35583ecbb",
+      "matiere": "6776e57decd1d3047699c51b",
+      "valeur": 13
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee63",
+      "eleve": "6776e8af596ca8d35583ecbc",
+      "matiere": "6776e74d72d238d4f0cb54a6",
+      "valeur": 18
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee64",
+      "eleve": "6776e8af596ca8d35583ecbd",
+      "matiere": "6776e74d72d238d4f0cb54a6",
+      "valeur": 19
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee65",
+      "eleve": "6776e8af596ca8d35583ecbe",
+      "matiere": "6776e74d72d238d4f0cb54a6",
+      "valeur": 17
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee66",
+      "eleve": "6776e8af596ca8d35583ecbf",
+      "matiere": "6776e74d72d238d4f0cb54a6",
+      "valeur": 13
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee67",
+      "eleve": "6776e8af596ca8d35583ecc0",
+      "matiere": "6776e74d72d238d4f0cb54a6",
+      "valeur": 14
+    },
+    {
+      "_id": "6776ec79596ca8d35583ee68",
+      "eleve": "6776e8af596ca8d35583ecc1",
+      "matiere": "6776e74d72d238d4f0cb54a6",
+      "valeur": 15
+    }
+  ],
+  "matieres": [
+    {
+      "_id": "674f062f1c86f75b56ef55da",
+      "nom": "mathématique",
+      "prof": "674f062f1c86f75b56ef55d8"
+    },
+    {
+      "_id": "6776e57decd1d3047699c51b",
+      "nom": "physique",
+      "prof": "6776e57decd1d3047699c519"
+    },
+    {
+      "_id": "6776e74d72d238d4f0cb54a6",
+      "prof": "6776e3b5596ca8d35583eb6c",
+      "nom": "phylosophie"
+    }
+  ],
+  "classes": [
+    {
+      "_id": "674f062f1c86f75b56ef55da",
+      "nom": "classe A",
+      "eleves": [
+        "674f24782bb94ee032f3e85e",
+        "676806bfeebd54c419b476df",
+        "6776e3b5596ca8d35583eb6b",
+        "6776e4dbecd1d3047699c50d",
+        "6776e8af596ca8d35583ecb4",
+        "6776e8af596ca8d35583ecb5"
+      ],
+      "nbPlace": 30
+    },
+    {
+      "_id": "6776e57decd1d3047699c51b",
+      "nom": "classe B",
+      "eleves": [
+        "6776e8af596ca8d35583ecb6",
+        "6776e8af596ca8d35583ecb7",
+        "6776e8af596ca8d35583ecb8",
+        "6776e8af596ca8d35583ecb9",
+        "6776e8af596ca8d35583ecba",
+        "6776e8af596ca8d35583ecbb"
+      ],
+      "nbPlace": 25
+    },
+    {
+      "_id": "6776e74d72d238d4f0cb54a6",
+      "nom": "classe C",
+      "eleves": [
+        "6776e8af596ca8d35583ecbc",
+        "6776e8af596ca8d35583ecbd",
+        "6776e8af596ca8d35583ecbe",
+        "6776e8af596ca8d35583ecbf",
+        "6776e8af596ca8d35583ecc0",
+        "6776e8af596ca8d35583ecc1"
+      ],
+      "nbPlace": 20
+    }
+  ],
+  "cours": [
+    {
+      "_id": "674f062f1c86f75b56ef55d1",
+      "prof": "674f062f1c86f75b56ef55d8",
+      "classe": "674f062f1c86f75b56ef55da",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "debut": "2025-01-10T08:00:00.000Z",
+      "fin": "2025-01-10T10:00:00.000Z"
+    },
+    {
+      "_id": "6776e57decd1d3047699c51c",
+      "prof": "6776e3b5596ca8d35583eb6c",
+      "classe": "6776e57decd1d3047699c51b",
+      "matiere": "6776e57decd1d3047699c51b",
+      "debut": "2025-01-11T10:00:00.000Z",
+      "fin": "2025-01-11T12:00:00.000Z"
+    },
+    {
+      "_id": "6776e74d72d238d4f0cb54b2",
+      "prof": "6776e3b5596ca8d35583eb6c",
+      "classe": "6776e74d72d238d4f0cb54a6",
+      "matiere": "6776e74d72d238d4f0cb54a6",
+      "debut": "2025-01-12T09:00:00.000Z",
+      "fin": "2025-01-12T11:00:00.000Z"
+    },
+    {
+      "_id": "674f062f1c86f75b56ef55d2",
+      "prof": "674f062f1c86f75b56ef55d8",
+      "classe": "674f062f1c86f75b56ef55da",
+      "matiere": "6776e57decd1d3047699c51b",
+      "debut": "2025-01-13T08:00:00.000Z",
+      "fin": "2025-01-13T10:00:00.000Z"
+    },
+    {
+      "_id": "6776e57decd1d3047699c51d",
+      "prof": "6776e57decd1d3047699c519",
+      "classe": "6776e57decd1d3047699c51b",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "debut": "2025-01-14T09:00:00.000Z",
+      "fin": "2025-01-14T11:00:00.000Z"
+    },
+    {
+      "_id": "6776e74d72d238d4f0cb54b3",
+      "prof": "6776e3b5596ca8d35583eb6c",
+      "classe": "6776e74d72d238d4f0cb54a6",
+      "matiere": "6776e74d72d238d4f0cb54a6",
+      "debut": "2025-01-15T10:00:00.000Z",
+      "fin": "2025-01-15T12:00:00.000Z"
+    },
+    {
+      "_id": "6776e57decd1d3047699c51e",
+      "prof": "674f062f1c86f75b56ef55d8",
+      "classe": "674f062f1c86f75b56ef55da",
+      "matiere": "6776e57decd1d3047699c51b",
+      "debut": "2025-01-16T08:00:00.000Z",
+      "fin": "2025-01-16T10:00:00.000Z"
+    },
+    {
+      "_id": "6776e74d72d238d4f0cb54b4",
+      "prof": "6776e57decd1d3047699c519",
+      "classe": "6776e57decd1d3047699c51b",
+      "matiere": "674f062f1c86f75b56ef55da",
+      "debut": "2025-01-17T10:00:00.000Z",
+      "fin": "2025-01-17T12:00:00.000Z"
+    }
+  ]
+}
