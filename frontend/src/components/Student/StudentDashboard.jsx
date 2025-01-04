@@ -3,9 +3,14 @@ import { useAuth } from '../../context/AuthContext';
 import axios from '../../api/axios';
 import './StudentDashboard.css';
 
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+
 const StudentDashboard = () => {
   const [studentInfo, setStudentInfo] = useState(null);
   const [notes, setNotes] = useState([]);
+  const [cours, setCours] = useState([]);
   const { token, logout } = useAuth();
   const [error, setError] = useState('');
 
@@ -21,6 +26,11 @@ const StudentDashboard = () => {
           headers: { Authorization: token }
         });
         setNotes(notesResponse.data);
+
+        const coursResponse = await axios.post('/eleve/cours', {}, {
+          headers: { Authorization: token }
+        });
+        setCours(coursResponse.data);
       } catch (err) {
         setError('Erreur lors du chargement des données');
         console.error(err);
@@ -73,6 +83,15 @@ const StudentDashboard = () => {
         ) : (
           <p>Aucune note disponible</p>
         )}
+      </div>
+      
+      <div className='calendar-section'>
+        <FullCalendar
+          plugins={[dayGridPlugin,timeGridPlugin]}
+          initialView='timeGridWeek'
+          headerToolbar={{left:'prev,next',right: 'timeGridWeek,timeGridDay,dayGridYear'}}
+          events={cours.map(cour=>{return {id:cour._id,start:cour.debut,end:cour.fin,title:`cours de ${cour.matiere.nom}\nprof : ${cour.prof.nom} ${cour.prof.prenom}\n${cour.classe.nom}`}})}
+        />
       </div>
 
       {error && <div className="error-message">{error}</div>}

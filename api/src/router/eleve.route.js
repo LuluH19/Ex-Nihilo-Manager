@@ -117,7 +117,7 @@ eleveRouter.post("/notes", async (req, res) => {
         if (!eleve) {
             return res.status(400).send({ message: "eleve not found" })
         } else {
-            noteModel.find({eleve:currentEleve._id}).populate({path:"matiere",target:"nom"}).then(notes=>{
+            noteModel.find({ eleve: currentEleve._id }).populate({ path: "matiere", target: "nom" }).then(notes => {
                 res.send(Array.isArray(notes) ? notes : [])
             })
         }
@@ -221,9 +221,13 @@ eleveRouter.post("/cours", async (req, res) => {
                 if (!classe) {
                     return res.status(400).send({ message: "no class found for this student" })
                 } else {
-                    coursModel.find({ classe: classe._id }).populate({ path: "prof", select: "_id email nom prenom" }).populate({ path: "matiere", select: "nom _id" }).then(cours => {
-                        res.send(Array.isArray(cours) ? cours : [])
-                    })
+                    coursModel.find({ classe: classe._id })
+                        .populate({ path: "prof", select: "_id email nom prenom" })
+                        .populate({ path: "matiere", select: "nom _id" })
+                        .populate({ path: "classe", select: "nom _id" })
+                        .then(cours => {
+                            res.send(Array.isArray(cours) ? cours : [])
+                        })
                 }
             })
         }

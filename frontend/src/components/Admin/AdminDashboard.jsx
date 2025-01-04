@@ -3,9 +3,14 @@ import { useAuth } from '../../context/AuthContext';
 import axios from '../../api/axios';
 import './AdminDashboard.css';
 
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+
 const AdminDashboard = () => {
   const [classes, setClasses] = useState([]);
   const [newClass, setNewClass] = useState({ nom: '', nbPlace: '' });
+  const [cours, setCours] = useState([]);
   const { token, logout } = useAuth();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -20,6 +25,12 @@ const AdminDashboard = () => {
         headers: { Authorization: token }
       });
       setClasses(response.data);
+
+      const coursResponse = await axios.post('/viescolaire/cours', {}, {
+        headers: { Authorization: token }
+      });
+
+      setCours(coursResponse.data);
     } catch (err) {
       setError('Erreur lors du chargement des classes');
     }
@@ -124,6 +135,15 @@ const AdminDashboard = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className='calendar-section'>
+        <FullCalendar
+          plugins={[dayGridPlugin,timeGridPlugin]}
+          initialView='timeGridWeek'
+          headerToolbar={{left:'prev,next',right: 'timeGridWeek,timeGridDay,dayGridYear'}}
+          events={cours.map(cour=>{return {id:cour._id,start:cour.debut,end:cour.fin,title:`cours de ${cour.matiere.nom}\nprof : ${cour.prof.nom} ${cour.prof.prenom}\n${cour.classe.nom}`}})}
+        />
       </div>
 
       {error && <div className="error-message">{error}</div>}

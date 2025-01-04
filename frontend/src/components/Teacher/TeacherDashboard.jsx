@@ -3,9 +3,14 @@ import { useAuth } from '../../context/AuthContext';
 import axios from '../../api/axios';
 import './TeacherDashboard.css';
 
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+
 const TeacherDashboard = () => {
   const [teacherInfo, setTeacherInfo] = useState(null);
   const [students, setStudents] = useState([]);
+  const [cours, setCours] = useState([]);
   const [newGrade, setNewGrade] = useState({ studentEmail: '', grade: '' });
   const { token, logout } = useAuth();
   const [error, setError] = useState('');
@@ -18,6 +23,11 @@ const TeacherDashboard = () => {
           headers: { Authorization: token }
         });
         setTeacherInfo(response.data);
+
+        const coursResponse = await axios.post('/prof/cours', {}, {
+          headers: { Authorization: token }
+        });
+        setCours(coursResponse.data);
       } catch (err) {
         setError('Erreur lors du chargement des données');
       }
@@ -61,6 +71,15 @@ const TeacherDashboard = () => {
         <p>Nom: {teacherInfo.prof.nom}</p>
         <p>Prénom: {teacherInfo.prof.prenom}</p>
         <p>Matière: {teacherInfo.matiere}</p>
+      </div>
+
+      <div className='calendar-section'>
+        <FullCalendar
+          plugins={[dayGridPlugin,timeGridPlugin]}
+          initialView='timeGridWeek'
+          headerToolbar={{left:'prev,next',right: 'timeGridWeek,timeGridDay,dayGridYear'}}
+          events={cours.map(cour=>{return {id:cour._id,start:cour.debut,end:cour.fin,title:`cours de ${cour.matiere.nom}\n${cour.classe.nom}`}})}
+        />
       </div>
 
       <div className="add-grade-section">

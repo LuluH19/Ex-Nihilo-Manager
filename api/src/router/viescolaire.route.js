@@ -510,9 +510,12 @@ vieScolaireRouter.post("/cours", async (req, res) => {
             } else if (data.role != "vieScolaire") {
                 return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
-                coursModel.find().populate({ path: "matiere", select: "nom" }).populate({ path: "prof", select: "_id email nom prenom" }).populate({ path: "classe", select: "nom" }).then(cours => {
-                    res.send(Array.isArray(cours) ? cours : [])
-                })
+                coursModel.find()
+                    .populate({ path: "matiere", select: "nom" })
+                    .populate({ path: "prof", select: "_id email nom prenom" })
+                    .populate({ path: "classe", select: "nom _id" }).then(cours => {
+                        res.send(Array.isArray(cours) ? cours : [])
+                    })
             }
         }
     )

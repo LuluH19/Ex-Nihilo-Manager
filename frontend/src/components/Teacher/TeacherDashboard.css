@@ -40,3 +40,15 @@
   color: red;
   margin-top: 20px;
 } 
+
+.calendar-section{
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+}
+.fc-event-title{
+  white-space: pre-line;
+}
