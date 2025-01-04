@@ -6,6 +6,7 @@ import './AdminDashboard.css';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import frLocale from '@fullcalendar/core/locales/fr';
 
 const AdminDashboard = () => {
   const [classes, setClasses] = useState([]);
@@ -140,9 +141,16 @@ const AdminDashboard = () => {
       <div className='calendar-section'>
         <FullCalendar
           plugins={[dayGridPlugin,timeGridPlugin]}
+          locale={frLocale}
           initialView='timeGridWeek'
           headerToolbar={{left:'prev,next',right: 'timeGridWeek,timeGridDay,dayGridYear'}}
           events={cours.map(cour=>{return {id:cour._id,start:cour.debut,end:cour.fin,title:`cours de ${cour.matiere.nom}\nprof : ${cour.prof.nom} ${cour.prof.prenom}\n${cour.classe.nom}`}})}
+          slotMinTime={"06:00:00"}
+          slotMaxTime={"20:00:00"}
+          businessHours={[
+            {daysOfWeek:[1,2,3,4,5],startTime: '8:00', endTime: '18:00'},
+            {daysOfWeek:[6],startTime: '8:00', endTime: '17:00'}
+          ]}
         />
       </div>
 
