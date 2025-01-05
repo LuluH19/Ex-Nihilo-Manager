@@ -209,7 +209,7 @@ vieScolaireRouter.post("/eleves", (req, res) => {
                                     notes: notes.filter(note => note.eleve.toString() === eleve._id.toString())
                                         .map(note => ({ valeur: note.valeur, matiere: note.matiere.nom }))
                                 }))
-                                res.send(Array.isArray(output) ? output : [])
+                                return res.send(Array.isArray(output) ? output : [])
                             })
                     }
                 )
