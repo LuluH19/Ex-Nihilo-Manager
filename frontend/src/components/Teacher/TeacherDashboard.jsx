@@ -16,10 +16,12 @@ const TeacherDashboard = () => {
   const { token, logout } = useAuth();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTeacherData = async () => {
       try {
+        setLoading(true);
         const response = await axios.post('/prof/info', {}, {
           headers: { Authorization: token }
         });
@@ -28,9 +30,17 @@ const TeacherDashboard = () => {
         const coursResponse = await axios.post('/prof/cours', {}, {
           headers: { Authorization: token }
         });
-        setCours(coursResponse.data);
+        setCours(coursResponse.data || []);
+
+        const studentsResponse = await axios.post('/prof/eleves', {}, {
+          headers: { Authorization: token }
+        });
+        setStudents(studentsResponse.data || []);
       } catch (err) {
         setError('Erreur lors du chargement des données');
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -58,7 +68,8 @@ const TeacherDashboard = () => {
     logout();
   };
 
-  if (!teacherInfo) return <div>Chargement...</div>;
+  if (loading) return <div>Chargement...</div>;
+  if (!teacherInfo) return <div>Aucune information disponible</div>;
 
   return (
     <div className="teacher-dashboard">
@@ -118,6 +129,40 @@ const TeacherDashboard = () => {
           </div>
           <button type="submit">Ajouter la note</button>
         </form>
+      </div>
+
+      <div className="students-list-section">
+        <h2>Liste des élèves</h2>
+        {students.length > 0 ? (
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((student) => (
+                <tr key={student._id}>
+                  <td>{student.nom}</td>
+                  <td>{student.prenom}</td>
+                  <td>{student.email}</td>
+                  <td>
+                    {(student.notes || []).map((note, index) => (
+                      <div key={index}>
+                        {note.matiere}: {note.valeur}/20
+                      </div>
+                    ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Aucun élève disponible</p>
+        )}
       </div>
 
       {error && <div className="error-message">{error}</div>}

@@ -15,9 +15,38 @@ const AdminDashboard = () => {
   const { token, logout } = useAuth();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [students, setStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState('');
+  const [selectedClass, setSelectedClass] = useState('');
 
   useEffect(() => {
     fetchClasses();
+  }, [token]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post('/viescolaire/classes/show', {}, {
+          headers: { Authorization: token }
+        });
+        setClasses(response.data);
+
+        const coursResponse = await axios.post('/viescolaire/cours', {}, {
+          headers: { Authorization: token }
+        });
+
+        setCours(coursResponse.data);
+
+        const studentsResponse = await axios.post('/viescolaire/eleves', {}, {
+          headers: { Authorization: token }
+        });
+        setStudents(studentsResponse.data);
+      } catch (err) {
+        setError('Erreur lors du chargement des classes');
+      }
+    };
+
+    fetchData();
   }, [token]);
 
   const fetchClasses = async () => {
@@ -85,50 +114,116 @@ const AdminDashboard = () => {
     logout();
   };
 
+  const handleAddStudentToClass = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('/viescolaire/classes/eleves/add', {
+        idClasse: selectedClass,
+        idEleve: selectedStudent
+      }, {
+        headers: { Authorization: token }
+      });
+      setSuccess('Élève ajouté à la classe avec succès');
+      fetchClasses();
+      setSelectedStudent('');
+      setSelectedClass('');
+    } catch (err) {
+      setError('Erreur lors de l\'ajout de l\'élève à la classe');
+    }
+  };
+
   return (
     <div className="admin-dashboard">
-      <header>
+      <header className="dashboard-header">
         <h1>Tableau de bord administratif</h1>
-        <button onClick={handleLogout}>Déconnexion</button>
+        <button className="logout-btn" onClick={handleLogout}>Déconnexion</button>
       </header>
 
-      <div className="create-class-section">
-        <h2>Créer une nouvelle classe</h2>
-        <form onSubmit={handleCreateClass}>
-          <div>
-            <label>Nom de la classe:</label>
-            <input
-              type="text"
-              value={newClass.nom}
-              onChange={(e) => setNewClass({...newClass, nom: e.target.value})}
-              required
-            />
+      <div className="dashboard-grid">
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h2>Créer une nouvelle classe</h2>
           </div>
-          <div>
-            <label>Nombre de places:</label>
-            <input
-              type="number"
-              value={newClass.nbPlace}
-              onChange={(e) => setNewClass({...newClass, nbPlace: e.target.value})}
-              required
-            />
+          <form onSubmit={handleCreateClass}>
+            <div className="form-group">
+              <label>Nom de la classe</label>
+              <input
+                type="text"
+                value={newClass.nom}
+                onChange={(e) => setNewClass({...newClass, nom: e.target.value})}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Nombre de places</label>
+              <input
+                type="number"
+                value={newClass.nbPlace}
+                onChange={(e) => setNewClass({...newClass, nbPlace: e.target.value})}
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-primary">Créer la classe</button>
+          </form>
+        </div>
+
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h2>Ajouter un élève</h2>
           </div>
-          <button type="submit">Créer la classe</button>
-        </form>
+          <form onSubmit={handleAddStudentToClass}>
+            <div className="form-group">
+              <label>Sélectionner un élève</label>
+              <select 
+                value={selectedStudent} 
+                onChange={(e) => setSelectedStudent(e.target.value)}
+                required
+              >
+                <option value="">Choisir un élève</option>
+                {students.map((student) => (
+                  <option key={student._id} value={student._id}>
+                    {student.nom} {student.prenom}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Sélectionner une classe</label>
+              <select 
+                value={selectedClass} 
+                onChange={(e) => setSelectedClass(e.target.value)}
+                required
+              >
+                <option value="">Choisir une classe</option>
+                {classes.map((classe) => (
+                  <option key={classe._id} value={classe._id}>
+                    {classe.nom}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button type="submit" className="btn btn-primary">Ajouter à la classe</button>
+          </form>
+        </div>
       </div>
 
       <div className="classes-list">
-        <h2>Liste des classes</h2>
         {classes.map((classe) => (
           <div key={classe._id} className="class-card">
-            <h3>{classe.nom}</h3>
-            <p>Places: {classe.eleves.length}/{classe.nbPlace}</p>
+            <div className="class-header">
+              <h3>{classe.nom}</h3>
+            </div>
+            <div className="class-info">
+              Places: {classe.eleves.length}/{classe.nbPlace}
+            </div>
             <div className="students-list">
-              <h4>Élèves:</h4>
               {classe.eleves.map((eleve) => (
                 <div key={eleve._id} className="student-item">
-                  <span>{eleve.nom} {eleve.prenom}</span>
-                  <button onClick={() => handleRemoveStudent(classe._id, eleve._id)}>
+                  <span className="student-name">{eleve.nom} {eleve.prenom}</span>
+                  <button 
+                    className="remove-btn"
+                    onClick={() => handleRemoveStudent(classe._id, eleve._id)}
+                  >
                     Retirer
                   </button>
                 </div>
@@ -138,7 +233,7 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      <div className='calendar-section'>
+      <div className="calendar-section">
         <FullCalendar
           plugins={[dayGridPlugin,timeGridPlugin]}
           locale={frLocale}
@@ -156,8 +251,8 @@ const AdminDashboard = () => {
         />
       </div>
 
-      {error && <div className="error-message">{error}</div>}
-      {success && <div className="success-message">{success}</div>}
+      {error && <div className="message error-message">{error}</div>}
+      {success && <div className="message success-message">{success}</div>}
     </div>
   );
 };
