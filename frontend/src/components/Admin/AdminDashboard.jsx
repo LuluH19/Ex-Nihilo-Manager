@@ -143,7 +143,7 @@ const AdminDashboard = () => {
           plugins={[dayGridPlugin,timeGridPlugin]}
           locale={frLocale}
           initialView='timeGridWeek'
-          headerToolbar={{left:'prev,next',right: 'timeGridWeek,timeGridDay,dayGridYear'}}
+          headerToolbar={{left:'prev,next', center:'title',right: 'today,timeGridDay,timeGridWeek,dayGridYear'}}
           events={cours.map(cour=>{return {id:cour._id,start:cour.debut,end:cour.fin,title:`cours de ${cour.matiere.nom}\nprof : ${cour.prof.nom} ${cour.prof.prenom}\n${cour.classe.nom}`}})}
           slotMinTime={"06:00:00"}
           slotMaxTime={"20:00:00"}
@@ -151,6 +151,8 @@ const AdminDashboard = () => {
             {daysOfWeek:[1,2,3,4,5],startTime: '8:00', endTime: '18:00'},
             {daysOfWeek:[6],startTime: '8:00', endTime: '17:00'}
           ]}
+          weekNumbers="true"
+          nowIndicator="true"
         />
       </div>
 
