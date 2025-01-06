@@ -5,11 +5,13 @@ import TeacherDashboard from './components/Teacher/TeacherDashboard';
 import AdminDashboard from './components/Admin/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
+import HeaderComponent from './components/common/HeaderComponent';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <HeaderComponent/>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route 
