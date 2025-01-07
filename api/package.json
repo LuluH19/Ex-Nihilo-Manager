@@ -11,7 +11,7 @@
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "exnihilo api for exnihilo manager application",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
