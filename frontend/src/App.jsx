@@ -1,3 +1,5 @@
+import React, {useEffect} from "react";
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login/Login';
 import StudentDashboard from './components/Student/StudentDashboard';
@@ -8,6 +10,11 @@ import { AuthProvider } from './context/AuthContext';
 import HeaderComponent from './components/common/HeaderComponent';
 
 function App() {
+
+  useEffect(() => {
+    document.title = "Ex-Nihilo Manager";
+  }, []);
+
   return (
     <AuthProvider>
       <Router>
