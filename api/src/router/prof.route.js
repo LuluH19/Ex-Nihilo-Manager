@@ -95,7 +95,7 @@ profRouter.post("/info", async (req, res) => {
             if (!prof) {
                 return res.status(400).send({ message: "prof not found" })
             } else if (prof.role != "prof") {
-                return res.send({ message: "user isnt a prof" })
+                return res.status(400).send({ message: "user isnt a prof" })
             } else {
                 matiereModel.findOne({ prof: currentProf._id }).then(
                     matiere => {
@@ -134,7 +134,7 @@ profRouter.post("/delete", async (req, res) => {
             if (!prof) {
                 return res.status(400).send({ message: "prof not found" })
             } else if (prof.role != "prof") {
-                return res.send({ message: "user isnt a prof" })
+                return res.status(400).send({ message: "user isnt a prof" })
             } else {
                 utilisateurModel.findOneAndDelete(currentProf).then(
                     () => {
@@ -181,7 +181,7 @@ profRouter.post("/update", async (req, res) => {
     ).then(
         data => {
             if (!data) {
-                return res.send({ message: "prof not found" })
+                return res.status(400).send({ message: "prof not found" })
             }
             return res.send(updatedProf)
         }
@@ -208,9 +208,9 @@ profRouter.post("/eleves", async (req, res) => {
     utilisateurModel.findOne(currentProf).then(
         prof => {
             if (!prof) {
-                return res.send({ message: "prof not found" })
+                return res.status(400).send({ message: "prof not found" })
             } else if (prof.role != "prof") {
-                return res.send({ message: "user isnt a prof" })
+                return res.status(400).send({ message: "user isnt a prof" })
             } else {
                 utilisateurModel.find({ role: "eleve" }, { password: 0 }).then(
                     eleves => {
@@ -254,13 +254,13 @@ profRouter.post("/notes/eleve", async (req, res) => {
     utilisateurModel.findOne(currentProf).then(
         prof => {
             if (!prof) {
-                return res.send({ message: "prof not found" })
+                return res.status(400).send({ message: "prof not found" })
             } else if (prof.role != "prof") {
-                return res.send({ message: "user isnt a prof" })
+                return res.status(400).send({ message: "user isnt a prof" })
             } else {
                 utilisateurModel.findOne({ email: currentEleve }).then(eleve => {
                     if (!eleve) {
-                        return res.send({ message: "eleve not found" })
+                        return res.status(400).send({ message: "eleve not found" })
                     } else {
                         noteModel.find({ eleve: currentEleve._id }).populate({ path: 'matiere', select: 'nom' }).then(notes => {
                             return res.send(Array.isArray(notes) ? notes : [])
@@ -299,21 +299,21 @@ profRouter.post("/notes/add", async (req, res) => {
     utilisateurModel.findOne(currentProf).then(
         prof => {
             if (!prof) {
-                return res.send({ message: "prof not found" })
+                return res.status(400).send({ message: "prof not found" })
             } else if (prof.role != "prof") {
-                return res.send({ message: "user isnt a prof" })
+                return res.status(400).send({ message: "user isnt a prof" })
             } else {
                 utilisateurModel.findOne({ email: currentEleve.email }).then(
                     eleve => {
                         if (!eleve) {
-                            return res.send({ message: "eleve not found" })
+                            return res.status(400).send({ message: "eleve not found" })
                         } else if (eleve.role != "eleve") {
-                            return res.send({ message: "user isnt a eleve" })
+                            return res.status(400).send({ message: "user isnt a eleve" })
                         } else {
                             matiereModel.findOne({ prof: prof._id }).then(
                                 matiere => {
                                     if (!matiere) {
-                                        return res.send({ message: "matiere not found" })
+                                        return res.status(400).send({ message: "matiere not found" })
                                     } else {
                                         noteModel.create({ eleve: eleve._id, matiere: matiere._id, valeur: currentEleve.note }).then(() => {
                                             return res.send({ message: "note added" })
@@ -350,7 +350,7 @@ profRouter.post("/cours", async (req, res) => {
         if (!prof) {
             return res.status(400).send({ message: "prof not found" })
         } else if (prof.role != "prof") {
-            return res.send({ message: "user isnt a prof" })
+            return res.status(400).send({ message: "user isnt a prof" })
         } else {
             coursModel.find({ prof: currentProf._id })
                 .populate({ path: "matiere", select: "nom" })

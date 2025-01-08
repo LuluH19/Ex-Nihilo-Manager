@@ -189,7 +189,7 @@ eleveRouter.post("/update", async (req, res) => {
     ).then(
         data => {
             if (!data) {
-                return res.send({ message: "eleve not found" })
+                return res.status(400).send({ message: "eleve not found" })
             }
             return res.send(updatedEleve)
         }

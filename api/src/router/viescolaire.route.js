@@ -166,7 +166,7 @@ vieScolaireRouter.post("/update", async (req, res) => {
     ).then(
         data => {
             if (!data) {
-                return res.send({ message: "vieScolaire not found" })
+                return res.status(400).send({ message: "vieScolaire not found" })
             } else if (data.role != "vieScolaire") {
                 return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
@@ -400,7 +400,7 @@ vieScolaireRouter.post("/classes/eleves/add", async (req, res) => {
             } else {
                 classeModel.findById(currentClasse.id).then(classe => {
                     if (!classe) {
-                        return res.send({ message: "classe not found" })
+                        return res.status(400).send({ message: "classe not found" })
                     } else {
                         utilisateurModel.findById(currentEleve.id).then(eleve => {
                             if (!eleve) {
@@ -461,7 +461,7 @@ vieScolaireRouter.post("/classes/eleves/remove", async (req, res) => {
             } else {
                 classeModel.findById(currentClasse.id).then(classe => {
                     if (!classe) {
-                        return res.send({ message: "classe not found" })
+                        return res.status(400).send({ message: "classe not found" })
                     } else {
                         utilisateurModel.findById(currentEleve.id).then(eleve => {
                             if (!eleve) {
