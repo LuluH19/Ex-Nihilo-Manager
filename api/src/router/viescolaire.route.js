@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken")
 const { utilisateurModel, classeModel, coursModel, noteModel } = require('../database/model.db')
 const { isValidEmail, isValidTel, isValidPassword, isValidDataObject, isValidPosInt } = require('../controller/check')
 const { generateToken, verifyToken } = require("../middleware/jwt")
-const { cp } = require('node:fs')
 
 vieScolaireRouter.post("/login", async (req, res) => {
     const currentVieScolaire = {
@@ -25,7 +24,6 @@ vieScolaireRouter.post("/login", async (req, res) => {
             }
         }
     )
-
 })
 //Create
 vieScolaireRouter.post("/register", async (req, res) => {
@@ -200,17 +198,16 @@ vieScolaireRouter.post("/eleves", (req, res) => {
             } else if (data.role != "vieScolaire") {
                 return res.status(400).send({ message: "user isnt a vieScolaire" })
             } else {
-                utilisateurModel.find({ role: "eleve" }, { password: 0 }).then(
-                    eleves => {
-                        noteModel.find().populate({ path: "matiere", select: "nom" }).then(
-                            notes => {
-                                const output = eleves.map(eleve => ({
-                                    ...eleve.toObject(),
-                                    notes: notes.filter(note => note.eleve.toString() === eleve._id.toString())
-                                        .map(note => ({ valeur: note.valeur, matiere: note.matiere.nom }))
-                                }))
-                                return res.send(Array.isArray(output) ? output : [])
-                            })
+                utilisateurModel.find({ role: "eleve" }, { password: 0 }).then(eleves => {
+                    noteModel.find().populate({ path: "matiere", select: "nom" }).then(
+                        notes => {
+                            const output = eleves.map(eleve => ({
+                                ...eleve.toObject(),
+                                notes: notes.filter(note => note.eleve.toString() === eleve._id.toString())
+                                    .map(note => ({ valeur: note.valeur, matiere: note.matiere.nom }))
+                            }))
+                            return res.send(Array.isArray(output) ? output : [])
+                        })
                     }
                 )
             }
